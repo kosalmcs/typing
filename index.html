@@ -57,7 +57,7 @@
 
         <h1 class="text-4xl font-extrabold text-blue-600 mb-4">Typing Speed Test</h1>
 
-        <!-- Options: Duration Selection, Text Category, Lesson Selection -->
+        <!-- Options: Duration Selection, Text Category, Case Sensitivity -->
         <div class="flex flex-wrap justify-center gap-4 mb-4 w-full">
             <div class="flex items-center space-x-2">
                 <label for="test-duration" class="text-lg font-semibold text-gray-700">Duration:</label>
@@ -75,15 +75,12 @@
                     <option value="general">General</option>
                     <option value="quotes">Quotes</option>
                     <option value="technical">Technical</option>
-                    <option value="lessons">Lessons</option>
                 </select>
             </div>
 
-            <div id="lesson-selection-container" class="flex items-center space-x-2 hidden">
-                <label for="lesson-select" class="text-lg font-semibold text-gray-700">Select Lesson:</label>
-                <select id="lesson-select" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
-                    <!-- Options will be populated by JavaScript -->
-                </select>
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="case-sensitive" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                <label for="case-sensitive" class="text-lg font-semibold text-gray-700">Case Sensitive</label>
             </div>
         </div>
 
@@ -124,7 +121,7 @@
         </div>
 
         <!-- Results Display -->
-        <div class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 flex flex-col md:flex-row justify-around items-center gap-6 text-center shadow-lg">
+        <div class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-6 text-center shadow-lg">
             <div class="flex flex-col items-center">
                 <span class="text-gray-500 text-sm font-semibold">WPM (Words Per Minute)</span>
                 <span id="wpm-display" class="text-5xl font-extrabold text-blue-800">0</span>
@@ -140,6 +137,10 @@
             <div class="flex flex-col items-center">
                 <span class="text-gray-500 text-sm font-semibold">Time (seconds)</span>
                 <span id="timer-display" class="text-5xl font-extrabold text-green-600">0</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">Words Typed</span>
+                <span id="words-typed-display" class="text-5xl font-extrabold text-orange-600">0</span>
             </div>
             <div class="flex flex-col items-center">
                 <span class="text-gray-500 text-sm font-semibold">Score</span>
@@ -176,14 +177,6 @@
                 "Cascading Style Sheets (CSS) describe how HTML elements are to be displayed on screen.",
                 "A git repository is a version control system that tracks changes in source code during software development.",
                 "API stands for Application Programming Interface, a set of defined rules that enable applications to interact."
-            ],
-            lessons: [
-                { id: 'home_row', name: 'Home Row (asdfjkl;)', content: 'asdfjkl;asdfjkl;asdfjkl;asdfjkl;asdfjkl;asdfjkl;' },
-                { id: 'top_row', name: 'Top Row (qwertyuiop)', content: 'qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop' },
-                { id: 'bottom_row', name: 'Bottom Row (zxcvbnm,./)', content: 'zxcvbnm,./zxcvbnm,./zxcvbnm,./zxcvbnm,./zxcvbnm,./' },
-                { id: 'common_words_1', name: 'Common Words 1', content: 'the and for but also with from that this there' },
-                { id: 'capital_letters', name: 'Capital Letters', content: 'The Quick Brown Fox Jumps Over The Lazy Dog. Practice your capital letters.' },
-                { id: 'numbers_symbols', name: 'Numbers & Symbols', content: '1234567890!@#$%^&*()_+-=[]{};\':",./<>?`~' },
             ]
         };
 
@@ -200,11 +193,11 @@
         const accuracyDisplay = document.getElementById('accuracy-display');
         const errorsDisplay = document.getElementById('errors-display');
         const timerDisplay = document.getElementById('timer-display');
+        const wordsTypedDisplay = document.getElementById('words-typed-display');
         const scoreDisplay = document.getElementById('score-display');
         const testDurationSelect = document.getElementById('test-duration');
         const textCategorySelect = document.getElementById('text-category');
-        const lessonSelectionContainer = document.getElementById('lesson-selection-container'); // New element
-        const lessonSelect = document.getElementById('lesson-select'); // New element
+        const caseSensitiveCheckbox = document.getElementById('case-sensitive'); // New element
 
         // Game state variables
         let currentText = '';
@@ -212,10 +205,11 @@
         let startTime = 0;
         let endTime = 0;
         let timerInterval;
-        let errors = 0;
         let isTestRunning = false;
-        let correctCharsCount = 0; // To count only the characters typed correctly on the first attempt
-        let selectedDuration = 0; // 0 for full text, otherwise in seconds
+        let selectedDuration = 0;
+        let wordsTypedCount = 0;
+        let typedCharsCorrectness = []; // Stores true/false for correctness of each char at its position
+        let isCaseSensitive = false; // New state variable
 
         // Variables to store final results for printing
         let finalWPM = 0;
@@ -223,56 +217,29 @@
         let finalErrors = 0;
         let finalTime = 0;
         let finalScore = 0;
-
-        /**
-         * Populates the lesson select dropdown based on available lessons.
-         */
-        function populateLessonSelect() {
-            lessonSelect.innerHTML = ''; // Clear existing options
-            texts.lessons.forEach(lesson => {
-                const option = document.createElement('option');
-                option.value = lesson.id;
-                option.textContent = lesson.name;
-                lessonSelect.appendChild(option);
-            });
-        }
+        let finalWordsTyped = 0;
 
         /**
          * Initializes the typing test by setting up the text and resetting game state.
          */
         function initializeTest() {
             const selectedCategory = textCategorySelect.value;
+            isCaseSensitive = caseSensitiveCheckbox.checked; // Get initial case sensitivity
 
-            // Show/hide and enable/disable lesson selection based on category
-            if (selectedCategory === 'lessons') {
-                lessonSelectionContainer.classList.remove('hidden');
-                lessonSelect.disabled = false;
-                populateLessonSelect(); // Ensure lessons are loaded
-                // For lessons, force duration to "Full Text"
-                testDurationSelect.value = "0";
-                testDurationSelect.disabled = true;
-            } else {
-                lessonSelectionContainer.classList.add('hidden');
-                lessonSelect.disabled = true;
-                testDurationSelect.disabled = false;
-            }
+            // Ensure duration select is always enabled
+            testDurationSelect.disabled = false;
 
-            // Determine which text to use
-            if (selectedCategory === 'lessons') {
-                const selectedLesson = texts.lessons.find(lesson => lesson.id === lessonSelect.value);
-                currentText = selectedLesson ? selectedLesson.content : texts.lessons[0].content; // Default to first lesson if not found
-            } else {
-                const categoryTexts = texts[selectedCategory] || texts.general; // Fallback to general if category not found
-                currentText = categoryTexts[Math.floor(Math.random() * categoryTexts.length)];
-            }
-
+            // Determine which text to use based on the selected category
+            const categoryTexts = texts[selectedCategory] || texts.general; // Fallback to general if category not found
+            currentText = categoryTexts[Math.floor(Math.random() * categoryTexts.length)];
+            
             charIndex = 0;
-            errors = 0;
             startTime = 0;
             endTime = 0;
-            correctCharsCount = 0;
             isTestRunning = false;
-            selectedDuration = parseInt(testDurationSelect.value); // Re-read duration after potential change for lessons
+            selectedDuration = parseInt(testDurationSelect.value); 
+            wordsTypedCount = 0; // Reset words typed count
+            typedCharsCorrectness = new Array(currentText.length).fill(null); // Reset correctness array
 
             // Clear input and disable it
             textInput.value = '';
@@ -282,15 +249,18 @@
             clearInterval(timerInterval);
             wpmDisplay.textContent = '0';
             accuracyDisplay.textContent = '0%';
-            errorsDisplay.textContent = '0';
+            errorsDisplay.textContent = '0'; // Errors display will be updated at end
             timerDisplay.textContent = '0';
-            scoreDisplay.textContent = '0'; // Reset score display
+            wordsTypedDisplay.textContent = '0';
+            scoreDisplay.textContent = '0';
             startButton.textContent = 'Start Test';
-            startButton.disabled = false; // Enable start button
-            printButton.disabled = true; // Disable print button initially
+            startButton.disabled = false;
+            printButton.disabled = true;
 
-            // Enable/disable category select (duration/lesson select handled above)
+            // Enable options
+            testDurationSelect.disabled = false;
             textCategorySelect.disabled = false;
+            caseSensitiveCheckbox.disabled = false; // Enable case sensitive checkbox
 
             // Display the text to be typed, highlighting the first character
             updateTextDisplay();
@@ -306,15 +276,20 @@
             const remaining = currentText.substring(charIndex + 1);
 
             // Apply highlighting for correct/incorrect typed characters
-            typedTextSpan.innerHTML = typed.split('').map((char, i) => {
-                // If a character was correctly typed, apply 'correct' class
-                // We're not tracking individual char errors for re-typing, only overall count
-                return `<span class="correct">${char}</span>`;
+            typedTextSpan.innerHTML = typed.split('').map((expectedChar, i) => {
+                let className = '';
+                // Only color if typedCharsCorrectness has a value (i.e., not null)
+                if (typedCharsCorrectness[i] === true) {
+                    className = 'correct';
+                } else if (typedCharsCorrectness[i] === false) {
+                    className = 'incorrect';
+                }
+                return `<span class="${className}">${expectedChar}</span>`;
             }).join('');
 
             // Highlight the current character to be typed
             currentCharSpan.textContent = current;
-            if (isTestRunning && current) { // Only add class if test is running and there's a char
+            if (isTestRunning && current) {
                 currentCharSpan.classList.add('highlight-current');
             } else {
                 currentCharSpan.classList.remove('highlight-current');
@@ -332,11 +307,11 @@
 
                 // Check if the current char is out of view (bottom)
                 if (charRect.bottom > containerRect.bottom) {
-                    container.scrollTop += (charRect.bottom - containerRect.bottom) + 20; // Scroll down
+                    container.scrollTop += (charRect.bottom - containerRect.bottom) + 20;
                 }
                 // Check if the current char is out of view (top)
                 if (charRect.top < containerRect.top) {
-                    container.scrollTop -= (containerRect.top - charRect.top) + 20; // Scroll up
+                    container.scrollTop -= (containerRect.top - charRect.top) + 20;
                 }
             }
         }
@@ -345,20 +320,20 @@
          * Starts the typing test.
          */
         function startTest() {
-            if (!currentText || isTestRunning) return; // Prevent starting if already running or no text loaded
+            if (!currentText || isTestRunning) return;
 
             isTestRunning = true;
             textInput.disabled = false;
-            textInput.focus(); // Focus on the input field
-            startTime = new Date().getTime(); // Record start time
+            textInput.focus();
+            startTime = new Date().getTime();
             startButton.textContent = 'Typing...';
-            startButton.disabled = true; // Disable start button during test
-            printButton.disabled = true; // Disable print button during test
+            startButton.disabled = true;
+            printButton.disabled = true;
 
-            // Disable options during test
+            // Disable all options during test
             testDurationSelect.disabled = true;
             textCategorySelect.disabled = true;
-            lessonSelect.disabled = true; // Disable lesson select during test
+            caseSensitiveCheckbox.disabled = true; // Disable case sensitive checkbox during test
 
             // Start the timer
             timerInterval = setInterval(() => {
@@ -381,31 +356,37 @@
          * @param {Event} event - The input event.
          */
         function handleInput(event) {
-            if (!isTestRunning) return; // Ignore input if test not running
+            if (!isTestRunning) return;
 
-            const typedChar = event.data; // The character just typed
-            let expectedChar = currentText[charIndex];
-
-            // If the user backspaces, adjust charIndex and potentially errors
+            // Handle backspace first
             if (event.inputType === 'deleteContentBackward') {
                 if (charIndex > 0) {
                     charIndex--;
-                    // Note: This simple example doesn't re-evaluate character correctness,
-                    // but moves the cursor back. For complex error tracking, more logic is needed.
+                    typedCharsCorrectness[charIndex] = null; // Mark backspaced char as untyped
                 }
             } else {
-                // Always perform case-insensitive comparison
-                let match = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
+                const typedChar = event.data;
+                const expectedChar = currentText[charIndex];
 
-                // Check if the typed character matches the expected character
-                if (match) {
-                    correctCharsCount++;
+                let isCorrect;
+                if (isCaseSensitive) {
+                    isCorrect = (typedChar === expectedChar);
                 } else {
-                    errors++;
-                    errorsDisplay.textContent = errors;
+                    isCorrect = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
                 }
+                typedCharsCorrectness[charIndex] = isCorrect;
+                
                 charIndex++; // Move to the next character
             }
+
+            // Update words typed count (based on words in the input value)
+            const currentInputValue = textInput.value.trim();
+            if (currentInputValue) {
+                wordsTypedCount = currentInputValue.split(/\s+/).length;
+            } else {
+                wordsTypedCount = 0;
+            }
+            wordsTypedDisplay.textContent = wordsTypedCount;
 
             // Update the display with current progress
             updateTextDisplay();
@@ -420,67 +401,106 @@
          * Ends the typing test and calculates results.
          */
         function endTest() {
-            if (!isTestRunning) return; // Ensure test is actually running before ending
+            if (!isTestRunning) return;
 
             isTestRunning = false;
-            endTime = new Date().getTime(); // Record end time
-            clearInterval(timerInterval); // Stop the timer
-            textInput.disabled = true; // Disable input
+            endTime = new Date().getTime();
+            clearInterval(timerInterval);
+            textInput.disabled = true;
             startButton.textContent = 'Restart Test';
-            startButton.disabled = false; // Enable restart button
-            printButton.disabled = false; // Enable print button
+            startButton.disabled = false;
+            printButton.disabled = false;
 
-            // Enable options (lesson select handled in initializeTest based on category)
+            // Re-enable options
             testDurationSelect.disabled = false;
             textCategorySelect.disabled = false;
-
+            caseSensitiveCheckbox.disabled = false; // Enable case sensitive checkbox after test
 
             const timeTakenSeconds = (endTime - startTime) / 1000;
             const timeTakenMinutes = timeTakenSeconds / 60;
 
-            // Calculate WPM (Words Per Minute): (total characters typed / 5) / time in minutes
-            // Use charIndex for typed characters in this round, as test might end by time
-            const grossWPM = (charIndex / 5) / timeTakenMinutes;
-            finalWPM = ((correctCharsCount - errors) / 5) / timeTakenMinutes;
-            finalWPM = timeTakenMinutes > 0 ? Math.max(0, Math.round(finalWPM)) : 0; // WPM cannot be negative, handle division by zero
+            let actualCorrectChars = 0;
+            let actualErrors = 0;
+            
+            // Calculate final errors and correct characters based on the final typed content
+            // Only count characters that were actually typed (up to charIndex)
+            for (let i = 0; i < charIndex; i++) {
+                // Ensure both characters exist for comparison
+                const typedChar = textInput.value[i];
+                const expectedChar = currentText[i];
 
-            // Calculate Accuracy: (correctly typed chars / total chars typed so far) * 100
-            // Total characters typed is charIndex (number of characters the user attempted to type)
-            finalAccuracy = charIndex > 0 ? Math.max(0, Math.round(((charIndex - errors) / charIndex) * 100)) : 0;
+                if (typedChar !== undefined && expectedChar !== undefined) {
+                    if (isCaseSensitive) {
+                        if (typedChar === expectedChar) {
+                            actualCorrectChars++;
+                        } else {
+                            actualErrors++;
+                        }
+                    } else {
+                        if (typedChar.toLowerCase() === expectedChar.toLowerCase()) {
+                            actualCorrectChars++;
+                        } else {
+                            actualErrors++;
+                        }
+                    }
+                } else if (expectedChar !== undefined) {
+                    // If user typed less than expected up to charIndex, count as error
+                    actualErrors++;
+                }
+            }
 
-            finalErrors = errors;
+            finalWPM = (actualCorrectChars / 5) / timeTakenMinutes;
+            finalWPM = timeTakenMinutes > 0 ? Math.max(0, Math.round(finalWPM)) : 0;
+
+            // Accuracy based on (correctly typed chars / total chars attempted)
+            finalAccuracy = charIndex > 0 ? Math.max(0, Math.round((actualCorrectChars / charIndex) * 100)) : 0;
+
+            finalErrors = actualErrors;
             finalTime = Math.round(timeTakenSeconds);
-
-            // Calculate Score: A weighted combination of WPM and Accuracy
-            // Example: WPM * (Accuracy / 100) - provides an "effective WPM"
+            finalWordsTyped = wordsTypedCount;
             finalScore = Math.round(finalWPM * (finalAccuracy / 100));
-
 
             wpmDisplay.textContent = finalWPM;
             accuracyDisplay.textContent = `${finalAccuracy}%`;
             errorsDisplay.textContent = finalErrors;
             timerDisplay.textContent = finalTime;
-            scoreDisplay.textContent = finalScore; // Update score display
+            wordsTypedDisplay.textContent = finalWordsTyped;
+            scoreDisplay.textContent = finalScore;
 
             // Remove highlight from current char
             currentCharSpan.classList.remove('highlight-current');
 
-            // Final update to display all typed text as correct if test completed fully,
-            // or highlight typed characters correctly/incorrectly up to charIndex if ended by time.
+            // Final update to display all typed text with correct/incorrect highlighting
             let finalTypedHtml = '';
             for (let i = 0; i < charIndex; i++) {
-                // Always use case-insensitive comparison for display
-                let isCharCorrect = (textInput.value[i]?.toLowerCase() === currentText[i]?.toLowerCase());
-                if (isCharCorrect) {
-                    finalTypedHtml += `<span class="correct">${currentText[i]}</span>`;
+                const typedChar = textInput.value[i];
+                const expectedChar = currentText[i];
+                let className = '';
+
+                if (typedChar !== undefined && expectedChar !== undefined) {
+                    let isCharCorrect;
+                    if (isCaseSensitive) {
+                        isCharCorrect = (typedChar === expectedChar);
+                    } else {
+                        isCharCorrect = (typedChar.toLowerCase() === expectedChar.toLowerCase());
+                    }
+
+                    if (isCharCorrect) {
+                        className = 'correct';
+                    } else {
+                        className = 'incorrect';
+                    }
                 } else {
-                    finalTypedHtml += `<span class="incorrect">${currentText[i]}</span>`;
+                    // If typedChar is undefined, it means user hasn't typed up to this point
+                    // or backspaced. We show the expected character with an error highlight.
+                    className = 'incorrect';
                 }
+                finalTypedHtml += `<span class="${className}">${currentText[i]}</span>`; // Display the expected char in color
             }
             typedTextSpan.innerHTML = finalTypedHtml;
 
-            currentCharSpan.textContent = ''; // Clear current char
-            remainingTextSpan.textContent = ''; // Clear remaining text
+            currentCharSpan.textContent = '';
+            remainingTextSpan.textContent = '';
         }
 
         /**
@@ -492,7 +512,7 @@
                     <h1 style="color: #2563eb;">Typing Test Results</h1>
                     <p style="font-size: 18px;">Test Duration: ${selectedDuration === 0 ? 'Full Text' : selectedDuration + ' seconds'}</p>
                     <p style="font-size: 18px;">Text Category: ${textCategorySelect.value.charAt(0).toUpperCase() + textCategorySelect.value.slice(1)}</p>
-                    ${textCategorySelect.value === 'lessons' ? `<p style="font-size: 18px;">Lesson: ${lessonSelect.options[lessonSelect.selectedIndex].text}</p>` : ''}
+                    <p style="font-size: 18px;">Case Sensitive: ${isCaseSensitive ? 'Yes' : 'No'}</p>
                     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
                     <h2 style="color: #1d4ed8; margin-bottom: 10px;">Your Performance:</h2>
                     <table style="width: 80%; margin: 0 auto; border-collapse: collapse;">
@@ -513,6 +533,10 @@
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalTime} seconds</td>
                         </tr>
                         <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Words Typed:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWordsTyped}</td>
+                        </tr>
+                        <tr>
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Score:</td>
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalScore}</td>
                         </tr>
@@ -523,15 +547,14 @@
             // Open a new window for printing
             const printWindow = window.open('', '_blank', 'width=800,height=600');
             printWindow.document.write(printContent);
-            printWindow.document.close(); // Close the document stream for new window
+            printWindow.document.close();
 
             // Wait for content to render, then print
             printWindow.onload = function() {
                 printWindow.print();
-                printWindow.close(); // Close the print window after printing
+                printWindow.close();
             };
         }
-
 
         // Event Listeners
         startButton.addEventListener('click', startTest);
@@ -539,13 +562,12 @@
         printButton.addEventListener('click', printResults);
         textInput.addEventListener('input', handleInput);
         testDurationSelect.addEventListener('change', initializeTest);
-        textCategorySelect.addEventListener('change', initializeTest); // Changed to handle lesson selection
-        lessonSelect.addEventListener('change', initializeTest); // New event listener for lesson selection
+        textCategorySelect.addEventListener('change', initializeTest); 
+        caseSensitiveCheckbox.addEventListener('change', initializeTest); // New event listener
 
         // Initialize the test when the page loads
         document.addEventListener('DOMContentLoaded', () => {
-            populateLessonSelect(); // Populate lessons first
-            initializeTest(); // Then initialize the test
+            initializeTest(); 
         });
     </script>
 </body>
