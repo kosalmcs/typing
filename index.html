@@ -6,59 +6,39 @@
     <title>Typing Speed Test</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom styles for the blinking cursor in the text display */
-        .highlight-current {
-            background-color: #d1fae5; /* Light green for current character */
-            border-bottom: 2px solid #10b981; /* Green underline for current character */
-            animation: blink-caret 0.75s step-end infinite;
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: #10b981; }
-        }
-
-        /* Style for correct characters */
-        .correct {
-            color: #10b981; /* Green */
-        }
-
-        /* Style for incorrect characters - only applied at the end for uncorrected errors */
-        .incorrect {
-            color: #ef4444; /* Red */
-            background-color: #fee2e2; /* Light red background for errors */
-            text-decoration: underline wavy #ef4444; /* Wavy underline for errors */
-        }
-
-        /* Custom scrollbar for the text display */
-        .text-display::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .text-display::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .text-display::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        .text-display::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-    </style>
+    <!-- Google Fonts - Kantumruy Pro -->
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex flex-col justify-between items-center p-4 font-sans text-gray-800">
 
-    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl flex flex-col items-center space-y-6">
+    <!-- Top Navigation Bar -->
+    <header class="bg-blue-700 p-4 shadow-md w-full">
+        <div class="container mx-auto flex items-center justify-center">
+            <img src="https://placehold.co/40x40/ADD8E6/000000?text=Logo" alt="Typing Test Logo" class="h-10 w-10 rounded-full mr-3">
+            <h2 class="text-3xl font-extrabold text-white">Typing Speed Test</h2>
+        </div>
+    </header>
+
+    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl flex flex-col items-center space-y-6 my-auto">
 
         <h1 class="text-4xl font-extrabold text-blue-600 mb-4">Typing Speed Test</h1>
 
-        <!-- Options: Duration Selection, Text Category, Case Sensitivity -->
+        <!-- Options: Your Name, Duration Selection, Text Category, Case Sensitivity -->
         <div class="flex flex-wrap justify-center gap-4 mb-4 w-full">
+            <div class="flex items-center space-x-2">
+                <label for="user-name" class="text-lg font-semibold text-gray-700">Your Name:</label>
+                <select id="user-name" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
+                    <option value="">Select Name</option>
+                    <option value="Alice">Alice</option>
+                    <option value="Bob">Bob</option>
+                    <option value="Charlie">Charlie</option>
+                    <option value="Diana">Diana</option>
+                    <option value="Guest">Guest</option>
+                </select>
+            </div>
+
             <div class="flex items-center space-x-2">
                 <label for="test-duration" class="text-lg font-semibold text-gray-700">Duration:</label>
                 <select id="test-duration" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
@@ -75,6 +55,13 @@
                     <option value="general">General</option>
                     <option value="quotes">Quotes</option>
                     <option value="technical">Technical</option>
+                    <option value="programming_concepts">Programming Concepts</option>
+                    <option value="science_facts">Science Facts</option>
+                    <option value="history_events">History Events</option>
+                    <option value="literature_excerpts">Literature Excerpts</option>
+                    <option value="food_recipes">Food Recipes</option>
+                    <option value="travel_descriptions">Travel Descriptions</option>
+                    <option value="daily_life">Daily Life</option>
                 </select>
             </div>
 
@@ -157,487 +144,22 @@
         </div>
     </div>
 
-    <script>
-        // Predefined texts categorized by type
-        const texts = {
-            general: [
-                "The quick brown fox jumps over the lazy dog. This is a classic pangram often used for testing typewriters and keyboards.",
-                "Never underestimate the power of a good book. Reading can transport you to different worlds and expand your knowledge.",
-                "Technology has revolutionized the way we live, work, and interact with each other, connecting people across the globe.",
-                "The early bird catches the worm, but the second mouse gets the cheese. Always be prepared for opportunities and challenges.",
-                "Practice makes perfect. Consistent effort and dedication are key to mastering any skill, whether it's typing or playing an instrument.",
-                "In a world filled with information, critical thinking skills are more important than ever to distinguish fact from fiction.",
-                "The ocean is a vast and mysterious place, home to countless species and hidden wonders yet to be fully explored.",
-                "Cooking can be a relaxing and rewarding hobby, allowing you to experiment with flavors and create delicious meals.",
-                "Artificial intelligence is rapidly advancing, promising transformative changes across various industries and daily life.",
-                "The sun always shines brightest after the rain. Overcoming challenges makes successes even more meaningful."
-            ],
-            quotes: [
-                "The only way to do great work is to love what you do. - Steve Jobs",
-                "Be the change that you wish to see in the world. - Mahatma Gandhi",
-                "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
-                "It is during our darkest moments that we must focus to see the light. - Aristotle Onassis",
-                "Strive not to be a success, but rather to be of value. - Albert Einstein"
-            ],
-            technical: [
-                "HTTP (Hypertext Transfer Protocol) is the foundation of data communication for the World Wide Web.",
-                "JavaScript is a high-level, interpreted scripting language primarily used for client-side web development.",
-                "Cascading Style Sheets (CSS) describe how HTML elements are to be displayed on screen.",
-                "A git repository is a version control system that tracks changes in source code during software development.",
-                "API stands for Application Programming Interface, a set of defined rules that enable applications to interact."
-            ]
-        };
+    <!-- Footer -->
+    <footer class="bg-blue-700 p-4 text-center text-white text-sm w-full mt-8">
+        <p>&copy; 2024 Typing Speed Test. All rights reserved.</p>
+    </footer>
 
-        // Get references to DOM elements
-        const textDisplay = document.getElementById('text-display');
-        const typedTextSpan = document.getElementById('typed-text');
-        const currentCharSpan = document.getElementById('current-char');
-        const remainingTextSpan = document.getElementById('remaining-text');
-        const textInput = document.getElementById('text-input');
-        const startButton = document.getElementById('start-button');
-        const resetButton = document.getElementById('reset-button');
-        const printButton = document.getElementById('print-button');
-        const wpmDisplay = document.getElementById('wpm-display');
-        const accuracyDisplay = document.getElementById('accuracy-display');
-        const errorsDisplay = document.getElementById('errors-display');
-        const timerDisplay = document.getElementById('timer-display');
-        const wordsAttemptedDisplay = document.getElementById('words-attempted-display'); 
-        const correctWordsDisplay = document.getElementById('correct-words-display'); 
-        const remainingWordsDisplay = document.getElementById('remaining-words-display'); // New element
-        const scoreDisplay = document.getElementById('score-display');
-        const testDurationSelect = document.getElementById('test-duration');
-        const textCategorySelect = document.getElementById('text-category');
-        const caseSensitiveCheckbox = document.getElementById('case-sensitive');
+    <!-- Custom Message Box Modal -->
+    <div id="message-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <p id="modal-message" class="text-xl font-semibold mb-6"></p>
+            <button id="modal-close-button" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow hover:bg-blue-700 transition-colors duration-200">
+                OK
+            </button>
+        </div>
+    </div>
 
-        // Game state variables
-        let currentText = '';
-        let charIndex = 0;
-        let startTime = 0;
-        let endTime = 0;
-        let timerInterval;
-        let isTestRunning = false;
-        let selectedDuration = 0;
-        let wordsAttemptedCount = 0; 
-        let typedCharsCorrectness = []; // Stores true/false for correctness of each char at its position
-        let isCaseSensitive = false;
-        let remainingWordsCount = 0; // New variable
-
-        // Variables to store final results for printing
-        let finalWPM = 0;
-        let finalAccuracy = 0;
-        let finalErrors = 0;
-        let finalTime = 0;
-        let finalScore = 0;
-        let finalWordsAttempted = 0; 
-        let finalCorrectWords = 0; 
-        let finalRemainingWords = 0; // New variable
-
-        /**
-         * Calculates the number of words in a given text.
-         * @param {string} text - The input string.
-         * @returns {number} The number of words.
-         */
-        function countWords(text) {
-            // Trim whitespace and split by one or more whitespace characters
-            const words = text.trim().split(/\s+/);
-            // Filter out any empty strings that might result from multiple spaces
-            return words.filter(word => word.length > 0).length;
-        }
-
-        /**
-         * Initializes the typing test by setting up the text and resetting game state.
-         */
-        function initializeTest() {
-            const selectedCategory = textCategorySelect.value;
-            isCaseSensitive = caseSensitiveCheckbox.checked; // Get initial case sensitivity
-
-            // Ensure duration select is always enabled
-            testDurationSelect.disabled = false;
-
-            // Determine which text to use based on the selected category
-            const categoryTexts = texts[selectedCategory] || texts.general; // Fallback to general if category not found
-            currentText = categoryTexts[Math.floor(Math.random() * categoryTexts.length)];
-            
-            charIndex = 0;
-            startTime = 0;
-            endTime = 0;
-            isTestRunning = false;
-            selectedDuration = parseInt(testDurationSelect.value); 
-            wordsAttemptedCount = 0; 
-            typedCharsCorrectness = new Array(currentText.length).fill(null); 
-
-            // Calculate initial remaining words
-            remainingWordsCount = countWords(currentText);
-
-
-            // Clear input and reset displays
-            clearInterval(timerInterval);
-            wpmDisplay.textContent = '0';
-            accuracyDisplay.textContent = '0%';
-            errorsDisplay.textContent = '0'; 
-            timerDisplay.textContent = '0';
-            wordsAttemptedDisplay.textContent = '0'; 
-            correctWordsDisplay.textContent = '0'; 
-            remainingWordsDisplay.textContent = remainingWordsCount; // Set initial remaining words
-            scoreDisplay.textContent = '0';
-            startButton.textContent = 'Start Test';
-            startButton.disabled = false;
-            printButton.disabled = true;
-
-            // Enable options
-            testDurationSelect.disabled = false;
-            textCategorySelect.disabled = false;
-            caseSensitiveCheckbox.disabled = false; 
-
-            // Display the text to be typed, highlighting the first character
-            updateTextDisplay();
-        }
-
-        /**
-         * Updates the visual display of the text, showing typed, current, and remaining parts.
-         */
-        function updateTextDisplay() {
-            // Get the parts of the text: typed, current, and remaining
-            const typed = currentText.substring(0, charIndex);
-            const current = currentText[charIndex] || ''; // Handle end of text
-            const remaining = currentText.substring(charIndex + 1);
-
-            // Apply highlighting for correct/incorrect typed characters
-            typedTextSpan.innerHTML = typed.split('').map((expectedChar, i) => {
-                let className = '';
-                // Only color if typedCharsCorrectness has a value (i.e., not null)
-                // BUT, for real-time, we only show correct. Incorrect is only for final review.
-                if (typedCharsCorrectness[i] === true) {
-                    className = 'correct';
-                }
-                return `<span class="${className}">${expectedChar}</span>`;
-            }).join('');
-
-            // Highlight the current character to be typed
-            currentCharSpan.textContent = current;
-            if (isTestRunning && current) {
-                currentCharSpan.classList.add('highlight-current');
-            } else {
-                currentCharSpan.classList.remove('highlight-current');
-            }
-
-            // Display the remaining text
-            remainingTextSpan.textContent = remaining;
-
-            // Scroll the text display to keep the current character in view
-            const currentCharElement = currentCharSpan;
-            if (currentCharElement) {
-                const container = textDisplay;
-                const containerRect = container.getBoundingClientRect();
-                const charRect = currentCharElement.getBoundingClientRect();
-
-                // Check if the current char is out of view (bottom)
-                if (charRect.bottom > containerRect.bottom) {
-                    container.scrollTop += (charRect.bottom - containerRect.bottom) + 20;
-                }
-                // Check if the current char is out of view (top)
-                if (charRect.top < containerRect.top) {
-                    container.scrollTop -= (containerRect.top - charRect.top) + 20;
-                }
-            }
-        }
-
-        /**
-         * Starts the typing test.
-         */
-        function startTest() {
-            if (!currentText || isTestRunning) return;
-
-            isTestRunning = true;
-            textInput.disabled = false;
-            textInput.focus();
-            startTime = new Date().getTime();
-            startButton.textContent = 'Typing...';
-            startButton.disabled = true;
-            printButton.disabled = true;
-
-            // Disable all options during test
-            testDurationSelect.disabled = true;
-            textCategorySelect.disabled = true;
-            caseSensitiveCheckbox.disabled = true;
-
-            // Start the timer
-            timerInterval = setInterval(() => {
-                const currentTime = new Date().getTime();
-                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
-                timerDisplay.textContent = elapsedSeconds;
-
-                // Check for duration limit if set
-                if (selectedDuration > 0 && elapsedSeconds >= selectedDuration) {
-                    endTest();
-                }
-            }, 1000);
-
-            // Update display to show blinking cursor
-            updateTextDisplay();
-        }
-
-        /**
-         * Handles user input from the textarea.
-         * @param {Event} event - The input event.
-         */
-        function handleInput(event) {
-            if (!isTestRunning) return;
-
-            // Handle backspace first
-            if (event.inputType === 'deleteContentBackward') {
-                if (charIndex > 0) {
-                    charIndex--;
-                    typedCharsCorrectness[charIndex] = null; // Mark backspaced char as untyped
-                }
-            } else {
-                const typedChar = event.data;
-                const expectedChar = currentText[charIndex];
-
-                let isCorrect;
-                if (isCaseSensitive) {
-                    isCorrect = (typedChar === expectedChar);
-                } else {
-                    isCorrect = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
-                }
-                typedCharsCorrectness[charIndex] = isCorrect; 
-                
-                charIndex++; // Move to the next character
-            }
-
-            // Update words attempted count (based on words in the input value)
-            const currentInputValue = textInput.value.trim();
-            if (currentInputValue) {
-                wordsAttemptedCount = countWords(currentInputValue);
-            } else {
-                wordsAttemptedCount = 0;
-            }
-            wordsAttemptedDisplay.textContent = wordsAttemptedCount;
-
-            // Update remaining words count
-            const remainingTextSlice = currentText.substring(charIndex);
-            remainingWordsCount = countWords(remainingTextSlice);
-            remainingWordsDisplay.textContent = remainingWordsCount;
-
-
-            // Update the display with current progress
-            updateTextDisplay();
-
-            // Check if the test is completed by typing all characters
-            if (charIndex === currentText.length) {
-                endTest();
-            }
-        }
-
-        /**
-         * Ends the typing test and calculates results.
-         */
-        function endTest() {
-            if (!isTestRunning) return;
-
-            isTestRunning = false;
-            endTime = new Date().getTime();
-            clearInterval(timerInterval);
-            textInput.disabled = true;
-            startButton.textContent = 'Restart Test';
-            startButton.disabled = false;
-            printButton.disabled = false;
-
-            // Re-enable options
-            testDurationSelect.disabled = false;
-            textCategorySelect.disabled = false;
-            caseSensitiveCheckbox.disabled = false; 
-
-            const timeTakenSeconds = (endTime - startTime) / 1000;
-            const timeTakenMinutes = timeTakenSeconds / 60;
-
-            let actualCorrectChars = 0;
-            let actualErrors = 0;
-            
-            // Calculate final errors and correct characters based on the final typed content
-            // Only count characters that were actually typed (up to charIndex)
-            for (let i = 0; i < charIndex; i++) {
-                // Ensure both characters exist for comparison
-                const typedChar = textInput.value[i];
-                const expectedChar = currentText[i];
-
-                if (typedChar !== undefined && expectedChar !== undefined) {
-                    if (isCaseSensitive) {
-                        if (typedChar === expectedChar) {
-                            actualCorrectChars++;
-                        } else {
-                            actualErrors++;
-                        }
-                    } else {
-                        if (typedChar.toLowerCase() === expectedChar.toLowerCase()) {
-                            actualCorrectChars++;
-                        } else {
-                            actualErrors++;
-                        }
-                    }
-                } else if (expectedChar !== undefined) {
-                    // If user typed less than expected up to charIndex, count as error
-                    actualErrors++;
-                }
-            }
-
-            // Calculate Correct Words
-            let correctWordsCounter = 0;
-            const originalWords = currentText.substring(0, charIndex).split(/\s+/).filter(word => word.length > 0);
-            const typedWords = textInput.value.substring(0, charIndex).split(/\s+/).filter(word => word.length > 0);
-
-            for (let i = 0; i < Math.min(originalWords.length, typedWords.length); i++) {
-                let match = false;
-                if (isCaseSensitive) {
-                    match = (typedWords[i] === originalWords[i]);
-                } else {
-                    match = (typedWords[i].toLowerCase() === originalWords[i].toLowerCase());
-                }
-                if (match) {
-                    correctWordsCounter++;
-                }
-            }
-            finalCorrectWords = correctWordsCounter; 
-
-            finalWPM = (actualCorrectChars / 5) / timeTakenMinutes;
-            finalWPM = timeTakenMinutes > 0 ? Math.max(0, Math.round(finalWPM)) : 0;
-
-            // Accuracy based on (correctly typed chars / total chars attempted)
-            finalAccuracy = charIndex > 0 ? Math.max(0, Math.round((actualCorrectChars / charIndex) * 100)) : 0;
-
-            finalErrors = actualErrors;
-            finalTime = Math.round(timeTakenSeconds);
-            finalWordsAttempted = wordsAttemptedCount; 
-            finalRemainingWords = remainingWordsCount; // Store final remaining words
-            finalScore = Math.round(finalWPM * (finalAccuracy / 100));
-
-            wpmDisplay.textContent = finalWPM;
-            accuracyDisplay.textContent = `${finalAccuracy}%`;
-            errorsDisplay.textContent = finalErrors;
-            timerDisplay.textContent = finalTime;
-            wordsAttemptedDisplay.textContent = finalWordsAttempted; 
-            correctWordsDisplay.textContent = finalCorrectWords; 
-            remainingWordsDisplay.textContent = finalRemainingWords; // Update remaining words display
-            scoreDisplay.textContent = finalScore;
-
-            // Remove highlight from current char
-            currentCharSpan.classList.remove('highlight-current');
-
-            // Final update to display all typed text with correct/incorrect highlighting
-            let finalTypedHtml = '';
-            for (let i = 0; i < charIndex; i++) {
-                const typedChar = textInput.value[i];
-                const expectedChar = currentText[i];
-                let className = '';
-
-                if (typedChar !== undefined && expectedChar !== undefined) {
-                    let isCharCorrect;
-                    if (isCaseSensitive) {
-                        isCharCorrect = (typedChar === expectedChar);
-                    } else {
-                        isCharCorrect = (typedChar.toLowerCase() === expectedChar.toLowerCase());
-                    }
-
-                    if (isCharCorrect) {
-                        className = 'correct';
-                    } else {
-                        className = 'incorrect';
-                    }
-                } else {
-                    className = 'incorrect';
-                }
-                finalTypedHtml += `<span class="${className}">${currentText[i]}</span>`;
-            }
-            typedTextSpan.innerHTML = finalTypedHtml;
-
-            currentCharSpan.textContent = '';
-            remainingTextSpan.textContent = '';
-        }
-
-        /**
-         * Generates and prints the test results.
-         */
-        function printResults() {
-            const printContent = `
-                <div style="font-family: Arial, sans-serif; padding: 20px; text-align: center;">
-                    <h1 style="color: #2563eb;">Typing Test Results</h1>
-                    <p style="font-size: 18px;">Test Duration: ${selectedDuration === 0 ? 'Full Text' : selectedDuration + ' seconds'}</p>
-                    <p style="font-size: 18px;">Text Category: ${textCategorySelect.value.charAt(0).toUpperCase() + textCategorySelect.value.slice(1)}</p>
-                    <p style="font-size: 18px;">Case Sensitive: ${isCaseSensitive ? 'Yes' : 'No'}</p>
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
-                    <h2 style="color: #1d4ed8; margin-bottom: 10px;">Your Performance:</h2>
-                    <table style="width: 80%; margin: 0 auto; border-collapse: collapse; margin-bottom: 20px;">
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">WPM (Words Per Minute):</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWPM}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Accuracy:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalAccuracy}%</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Errors:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalErrors}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Time Taken:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalTime} seconds</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Words Attempted:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWordsAttempted}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Correct Words:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalCorrectWords}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Remaining Words:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalRemainingWords}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Score:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalScore}</td>
-                        </tr>
-                    </table>
-                    
-                    <h3 style="color: #1d4ed8; margin-bottom: 10px;">Original Text:</h3>
-                    <div style="text-align: left; padding: 10px; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px; word-wrap: break-word;">
-                        ${currentText}
-                    </div>
-
-                    <h3 style="color: #1d4ed8; margin-bottom: 10px;">Your Typed Text:</h3>
-                    <div style="text-align: left; padding: 10px; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 8px; word-wrap: break-word;">
-                        ${textInput.value}
-                    </div>
-                </div>
-            `;
-
-            // Open a new window for printing
-            const printWindow = window.open('', '_blank', 'width=800,height=600');
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-
-            // Wait for content to render, then print
-            printWindow.onload = function() {
-                printWindow.print();
-                printWindow.close();
-            };
-        }
-
-        // Event Listeners
-        startButton.addEventListener('click', startTest);
-        resetButton.addEventListener('click', initializeTest);
-        printButton.addEventListener('click', printResults);
-        textInput.addEventListener('input', handleInput);
-        testDurationSelect.addEventListener('change', initializeTest);
-        textCategorySelect.addEventListener('change', initializeTest); 
-        caseSensitiveCheckbox.addEventListener('change', initializeTest);
-
-        // Initialize the test when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeTest(); 
-        });
-    </script>
+    <!-- Link to external JavaScript file -->
+    <script src="script.js" type="module"></script>
 </body>
 </html>
