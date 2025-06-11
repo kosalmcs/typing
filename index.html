@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the blinking cursor in the text display */
+        .highlight-current {
+            background-color: #d1fae5;
+            /* Light green for current character */
+            border-bottom: 2px solid #10b981;
+            /* Green underline for current character */
+            animation: blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: #10b981;
+            }
+        }
+
+        /* Style for correct characters */
+        .correct {
+            color: #10b981;
+            /* Green */
+        }
+
+        /* Style for incorrect characters */
+        .incorrect {
+            color: #ef4444;
+            /* Red */
+            background-color: #fee2e2;
+            /* Light red background for errors */
+            text-decoration: underline wavy #ef4444;
+            /* Wavy underline for errors */
+        }
+
+        /* Custom scrollbar for the text display */
+        .text-display::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .text-display::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .text-display::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .text-display::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+
+    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl flex flex-col items-center space-y-6">
+
+        <h1 class="text-4xl font-extrabold text-blue-600 mb-4">Typing Speed Test</h1>
+
+        <!-- Text Display Area -->
+        <div id="text-display"
+            class="text-display bg-gray-50 p-6 rounded-xl border border-gray-200 text-lg leading-relaxed tracking-wide text-gray-700 w-full min-h-[150px] max-h-[300px] overflow-y-auto resize-y transition-all duration-300 ease-in-out font-mono shadow-inner">
+            <span id="typed-text"></span><span id="current-char"></span><span id="remaining-text"></span>
+        </div>
+
+        <!-- User Input Area -->
+        <textarea id="text-input"
+            class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-mono resize-none transition-all duration-300 ease-in-out shadow-md"
+            rows="5" placeholder="Start typing here..." disabled></textarea>
+
+        <!-- Control Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <button id="start-button"
+                class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+                Start Test
+            </button>
+            <button id="reset-button"
+                class="bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+                Reset
+            </button>
+        </div>
+
+        <!-- Results Display -->
+        <div
+            class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 flex flex-col md:flex-row justify-around items-center gap-6 text-center shadow-lg">
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">WPM (Words Per Minute)</span>
+                <span id="wpm-display" class="text-5xl font-extrabold text-blue-800">0</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">Accuracy</span>
+                <span id="accuracy-display" class="text-5xl font-extrabold text-purple-800">0%</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">Errors</span>
+                <span id="errors-display" class="text-5xl font-extrabold text-red-600">0</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">Time (seconds)</span>
+                <span id="timer-display" class="text-5xl font-extrabold text-green-600">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Array of predefined texts for the typing test
+        const texts = [
+            "ក quick brown fox jumps over the lazy dog. This is a classic pangram often used for testing typewriters and keyboards.",
+            "ខ underestimate the power of a good book. Reading can transport you to different worlds and expand your knowledge.",
+            "គ has revolutionized the way we live, work, and interact with each other, connecting people across the globe.",
+            "ឃ early bird catches the worm, but the second mouse gets the cheese. Always be prepared for opportunities and challenges.",
+            "ង makes perfect. Consistent effort and dedication are key to mastering any skill, whether it's typing or playing an instrument.",
+            "ច a world filled with information, critical thinking skills are more important than ever to distinguish fact from fiction.",
+            "ឆ ocean is a vast and mysterious place, home to countless species and hidden wonders yet to be fully explored.",
+            "ជ can be a relaxing and rewarding hobby, allowing you to experiment with flavors and create delicious meals.",
+            "ឈ intelligence is rapidly advancing, promising transformative changes across various industries and daily life.",
+            "ញ sun always shines brightest after the rain. Overcoming challenges makes successes even more meaningful."
+        ];
+
+        // Get references to DOM elements
+        const textDisplay = document.getElementById('text-display');
+        const typedTextSpan = document.getElementById('typed-text');
+        const currentCharSpan = document.getElementById('current-char');
+        const remainingTextSpan = document.getElementById('remaining-text');
+        const textInput = document.getElementById('text-input');
+        const startButton = document.getElementById('start-button');
+        const resetButton = document.getElementById('reset-button');
+        const wpmDisplay = document.getElementById('wpm-display');
+        const accuracyDisplay = document.getElementById('accuracy-display');
+        const errorsDisplay = document.getElementById('errors-display');
+        const timerDisplay = document.getElementById('timer-display');
+
+        // Game state variables
+        let currentText = '';
+        let charIndex = 0;
+        let startTime = 0;
+        let endTime = 0;
+        let timerInterval;
+        let errors = 0;
+        let isTestRunning = false;
+        let correctCharsCount = 0; // To count only the characters typed correctly on the first attempt
+
+        /**
+         * Initializes the typing test by setting up the text and resetting game state.
+         */
+        function initializeTest() {
+            // Select a random text from the array
+            currentText = texts[Math.floor(Math.random() * texts.length)];
+            charIndex = 0;
+            errors = 0;
+            startTime = 0;
+            endTime = 0;
+            correctCharsCount = 0;
+            isTestRunning = false;
+
+            // Clear input and disable it
+            textInput.value = '';
+            textInput.disabled = true;
+
+            // Clear and reset displays
+            clearInterval(timerInterval);
+            wpmDisplay.textContent = '0';
+            accuracyDisplay.textContent = '0%';
+            errorsDisplay.textContent = '0';
+            timerDisplay.textContent = '0';
+            startButton.textContent = 'Start Test';
+            startButton.disabled = false; // Enable start button
+
+            // Display the text to be typed, highlighting the first character
+            updateTextDisplay();
+        }
+
+        /**
+         * Updates the visual display of the text, showing typed, current, and remaining parts.
+         */
+        function updateTextDisplay() {
+            // Get the parts of the text: typed, current, and remaining
+            const typed = currentText.substring(0, charIndex);
+            const current = currentText[charIndex] || ''; // Handle end of text
+            const remaining = currentText.substring(charIndex + 1);
+
+            // Apply highlighting for correct/incorrect typed characters
+            typedTextSpan.innerHTML = typed.split('').map((char, i) => {
+                // If a character was correctly typed, apply 'correct' class
+                // We're not tracking individual char errors for re-typing, only overall count
+                return `<span class="correct">${char}</span>`;
+            }).join('');
+
+            // Highlight the current character to be typed
+            currentCharSpan.textContent = current;
+            if (isTestRunning && current) { // Only add class if test is running and there's a char
+                currentCharSpan.classList.add('highlight-current');
+            } else {
+                currentCharSpan.classList.remove('highlight-current');
+            }
+
+
+            // Display the remaining text
+            remainingTextSpan.textContent = remaining;
+
+            // Scroll the text display to keep the current character in view
+            const currentCharElement = currentCharSpan;
+            if (currentCharElement) {
+                const container = textDisplay;
+                const containerRect = container.getBoundingClientRect();
+                const charRect = currentCharElement.getBoundingClientRect();
+
+                // Check if the current char is out of view (bottom)
+                if (charRect.bottom > containerRect.bottom) {
+                    container.scrollTop += (charRect.bottom - containerRect.bottom) + 20; // Scroll down
+                }
+                // Check if the current char is out of view (top)
+                if (charRect.top < containerRect.top) {
+                    container.scrollTop -= (containerRect.top - charRect.top) + 20; // Scroll up
+                }
+            }
+        }
+
+        /**
+         * Starts the typing test.
+         */
+        function startTest() {
+            if (isTestRunning) return; // Prevent starting if already running
+
+            isTestRunning = true;
+            textInput.disabled = false;
+            textInput.focus(); // Focus on the input field
+            startTime = new Date().getTime(); // Record start time
+            startButton.textContent = 'Typing...';
+            startButton.disabled = true; // Disable start button during test
+
+            // Start the timer
+            timerInterval = setInterval(() => {
+                const currentTime = new Date().getTime();
+                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                timerDisplay.textContent = elapsedSeconds;
+            }, 1000);
+
+            // Update display to show blinking cursor
+            updateTextDisplay();
+        }
+
+        /**
+         * Handles user input from the textarea.
+         * @param {Event} event - The input event.
+         */
+        function handleInput(event) {
+            if (!isTestRunning) return; // Ignore input if test not running
+
+            const typedChar = event.data; // The character just typed
+            const expectedChar = currentText[charIndex];
+
+            // If the user backspaces, adjust charIndex and potentially errors
+            if (event.inputType === 'deleteContentBackward') {
+                if (charIndex > 0) {
+                    charIndex--;
+                    // Revert highlighting for the character we backspaced over
+                    // This simple example just moves back, more complex error tracking might be needed
+                }
+            } else {
+                // Check if the typed character matches the expected character
+                if (typedChar === expectedChar) {
+                    correctCharsCount++;
+                } else {
+                    errors++;
+                    errorsDisplay.textContent = errors;
+                    // Apply 'incorrect' class for visual feedback on error (briefly)
+                    // This is a simpler way to show error feedback, more robust would involve
+                    // adding the class to the typed character in typedTextSpan
+                }
+                charIndex++; // Move to the next character
+            }
+
+            // Update the display with current progress
+            updateTextDisplay();
+
+            // Check if the test is completed
+            if (charIndex === currentText.length) {
+                endTest();
+            }
+        }
+
+        /**
+         * Ends the typing test and calculates results.
+         */
+        function endTest() {
+            if (!isTestRunning) return;
+
+            isTestRunning = false;
+            endTime = new Date().getTime(); // Record end time
+            clearInterval(timerInterval); // Stop the timer
+            textInput.disabled = true; // Disable input
+            startButton.textContent = 'Restart Test';
+            startButton.disabled = false; // Enable restart button
+
+            const timeTakenSeconds = (endTime - startTime) / 1000;
+            const timeTakenMinutes = timeTakenSeconds / 60;
+
+            // Calculate WPM (Words Per Minute): (total characters typed / 5) / time in minutes
+            // Only count characters that were correctly typed on the first attempt
+            const grossWPM = (currentText.length / 5) / timeTakenMinutes;
+            const netWPM = ((correctCharsCount - errors) / 5) / timeTakenMinutes;
+            const finalWPM = Math.max(0, Math.round(netWPM)); // WPM cannot be negative
+
+            // Calculate Accuracy: (correctly typed chars / total chars typed) * 100
+            // Total characters typed is charIndex (length of passage)
+            const accuracy = currentText.length > 0 ? Math.max(0, Math.round(((currentText.length - errors) / currentText.length) * 100)) : 0;
+
+            wpmDisplay.textContent = finalWPM;
+            accuracyDisplay.textContent = `${accuracy}%`;
+            errorsDisplay.textContent = errors;
+            timerDisplay.textContent = Math.round(timeTakenSeconds);
+
+            // Remove highlight from current char
+            currentCharSpan.classList.remove('highlight-current');
+            // Final update to display all typed text as correct
+            typedTextSpan.innerHTML = currentText.split('').map(char => `<span class="correct">${char}</span>`).join('');
+            currentCharSpan.textContent = ''; // Clear current char
+            remainingTextSpan.textContent = ''; // Clear remaining text
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', startTest);
+        resetButton.addEventListener('click', initializeTest);
+        textInput.addEventListener('input', handleInput);
+
+        // Initialize the test when the page loads
+        document.addEventListener('DOMContentLoaded', initializeTest);
+    </script>
+</body>
+
+</html>
