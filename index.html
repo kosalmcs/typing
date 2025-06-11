@@ -24,7 +24,7 @@
             color: #10b981; /* Green */
         }
 
-        /* Style for incorrect characters */
+        /* Style for incorrect characters - only applied at the end for uncorrected errors */
         .incorrect {
             color: #ef4444; /* Red */
             background-color: #fee2e2; /* Light red background for errors */
@@ -121,7 +121,7 @@
         </div>
 
         <!-- Results Display -->
-        <div class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-6 text-center shadow-lg">
+        <div class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 text-center shadow-lg">
             <div class="flex flex-col items-center">
                 <span class="text-gray-500 text-sm font-semibold">WPM (Words Per Minute)</span>
                 <span id="wpm-display" class="text-5xl font-extrabold text-blue-800">0</span>
@@ -139,8 +139,16 @@
                 <span id="timer-display" class="text-5xl font-extrabold text-green-600">0</span>
             </div>
             <div class="flex flex-col items-center">
-                <span class="text-gray-500 text-sm font-semibold">Words Typed</span>
-                <span id="words-typed-display" class="text-5xl font-extrabold text-orange-600">0</span>
+                <span class="text-gray-500 text-sm font-semibold">Words Attempted</span>
+                <span id="words-attempted-display" class="text-5xl font-extrabold text-orange-600">0</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">Correct Words</span>
+                <span id="correct-words-display" class="text-5xl font-extrabold text-teal-600">0</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">Remaining Words</span>
+                <span id="remaining-words-display" class="text-5xl font-extrabold text-gray-600">0</span>
             </div>
             <div class="flex flex-col items-center">
                 <span class="text-gray-500 text-sm font-semibold">Score</span>
@@ -193,11 +201,13 @@
         const accuracyDisplay = document.getElementById('accuracy-display');
         const errorsDisplay = document.getElementById('errors-display');
         const timerDisplay = document.getElementById('timer-display');
-        const wordsTypedDisplay = document.getElementById('words-typed-display');
+        const wordsAttemptedDisplay = document.getElementById('words-attempted-display'); 
+        const correctWordsDisplay = document.getElementById('correct-words-display'); 
+        const remainingWordsDisplay = document.getElementById('remaining-words-display'); // New element
         const scoreDisplay = document.getElementById('score-display');
         const testDurationSelect = document.getElementById('test-duration');
         const textCategorySelect = document.getElementById('text-category');
-        const caseSensitiveCheckbox = document.getElementById('case-sensitive'); // New element
+        const caseSensitiveCheckbox = document.getElementById('case-sensitive');
 
         // Game state variables
         let currentText = '';
@@ -207,9 +217,10 @@
         let timerInterval;
         let isTestRunning = false;
         let selectedDuration = 0;
-        let wordsTypedCount = 0;
+        let wordsAttemptedCount = 0; 
         let typedCharsCorrectness = []; // Stores true/false for correctness of each char at its position
-        let isCaseSensitive = false; // New state variable
+        let isCaseSensitive = false;
+        let remainingWordsCount = 0; // New variable
 
         // Variables to store final results for printing
         let finalWPM = 0;
@@ -217,7 +228,21 @@
         let finalErrors = 0;
         let finalTime = 0;
         let finalScore = 0;
-        let finalWordsTyped = 0;
+        let finalWordsAttempted = 0; 
+        let finalCorrectWords = 0; 
+        let finalRemainingWords = 0; // New variable
+
+        /**
+         * Calculates the number of words in a given text.
+         * @param {string} text - The input string.
+         * @returns {number} The number of words.
+         */
+        function countWords(text) {
+            // Trim whitespace and split by one or more whitespace characters
+            const words = text.trim().split(/\s+/);
+            // Filter out any empty strings that might result from multiple spaces
+            return words.filter(word => word.length > 0).length;
+        }
 
         /**
          * Initializes the typing test by setting up the text and resetting game state.
@@ -238,20 +263,22 @@
             endTime = 0;
             isTestRunning = false;
             selectedDuration = parseInt(testDurationSelect.value); 
-            wordsTypedCount = 0; // Reset words typed count
-            typedCharsCorrectness = new Array(currentText.length).fill(null); // Reset correctness array
+            wordsAttemptedCount = 0; 
+            typedCharsCorrectness = new Array(currentText.length).fill(null); 
 
-            // Clear input and disable it
-            textInput.value = '';
-            textInput.disabled = true;
+            // Calculate initial remaining words
+            remainingWordsCount = countWords(currentText);
 
-            // Clear and reset displays
+
+            // Clear input and reset displays
             clearInterval(timerInterval);
             wpmDisplay.textContent = '0';
             accuracyDisplay.textContent = '0%';
-            errorsDisplay.textContent = '0'; // Errors display will be updated at end
+            errorsDisplay.textContent = '0'; 
             timerDisplay.textContent = '0';
-            wordsTypedDisplay.textContent = '0';
+            wordsAttemptedDisplay.textContent = '0'; 
+            correctWordsDisplay.textContent = '0'; 
+            remainingWordsDisplay.textContent = remainingWordsCount; // Set initial remaining words
             scoreDisplay.textContent = '0';
             startButton.textContent = 'Start Test';
             startButton.disabled = false;
@@ -260,7 +287,7 @@
             // Enable options
             testDurationSelect.disabled = false;
             textCategorySelect.disabled = false;
-            caseSensitiveCheckbox.disabled = false; // Enable case sensitive checkbox
+            caseSensitiveCheckbox.disabled = false; 
 
             // Display the text to be typed, highlighting the first character
             updateTextDisplay();
@@ -279,10 +306,9 @@
             typedTextSpan.innerHTML = typed.split('').map((expectedChar, i) => {
                 let className = '';
                 // Only color if typedCharsCorrectness has a value (i.e., not null)
+                // BUT, for real-time, we only show correct. Incorrect is only for final review.
                 if (typedCharsCorrectness[i] === true) {
                     className = 'correct';
-                } else if (typedCharsCorrectness[i] === false) {
-                    className = 'incorrect';
                 }
                 return `<span class="${className}">${expectedChar}</span>`;
             }).join('');
@@ -333,7 +359,7 @@
             // Disable all options during test
             testDurationSelect.disabled = true;
             textCategorySelect.disabled = true;
-            caseSensitiveCheckbox.disabled = true; // Disable case sensitive checkbox during test
+            caseSensitiveCheckbox.disabled = true;
 
             // Start the timer
             timerInterval = setInterval(() => {
@@ -374,19 +400,25 @@
                 } else {
                     isCorrect = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
                 }
-                typedCharsCorrectness[charIndex] = isCorrect;
+                typedCharsCorrectness[charIndex] = isCorrect; 
                 
                 charIndex++; // Move to the next character
             }
 
-            // Update words typed count (based on words in the input value)
+            // Update words attempted count (based on words in the input value)
             const currentInputValue = textInput.value.trim();
             if (currentInputValue) {
-                wordsTypedCount = currentInputValue.split(/\s+/).length;
+                wordsAttemptedCount = countWords(currentInputValue);
             } else {
-                wordsTypedCount = 0;
+                wordsAttemptedCount = 0;
             }
-            wordsTypedDisplay.textContent = wordsTypedCount;
+            wordsAttemptedDisplay.textContent = wordsAttemptedCount;
+
+            // Update remaining words count
+            const remainingTextSlice = currentText.substring(charIndex);
+            remainingWordsCount = countWords(remainingTextSlice);
+            remainingWordsDisplay.textContent = remainingWordsCount;
+
 
             // Update the display with current progress
             updateTextDisplay();
@@ -414,7 +446,7 @@
             // Re-enable options
             testDurationSelect.disabled = false;
             textCategorySelect.disabled = false;
-            caseSensitiveCheckbox.disabled = false; // Enable case sensitive checkbox after test
+            caseSensitiveCheckbox.disabled = false; 
 
             const timeTakenSeconds = (endTime - startTime) / 1000;
             const timeTakenMinutes = timeTakenSeconds / 60;
@@ -449,6 +481,24 @@
                 }
             }
 
+            // Calculate Correct Words
+            let correctWordsCounter = 0;
+            const originalWords = currentText.substring(0, charIndex).split(/\s+/).filter(word => word.length > 0);
+            const typedWords = textInput.value.substring(0, charIndex).split(/\s+/).filter(word => word.length > 0);
+
+            for (let i = 0; i < Math.min(originalWords.length, typedWords.length); i++) {
+                let match = false;
+                if (isCaseSensitive) {
+                    match = (typedWords[i] === originalWords[i]);
+                } else {
+                    match = (typedWords[i].toLowerCase() === originalWords[i].toLowerCase());
+                }
+                if (match) {
+                    correctWordsCounter++;
+                }
+            }
+            finalCorrectWords = correctWordsCounter; 
+
             finalWPM = (actualCorrectChars / 5) / timeTakenMinutes;
             finalWPM = timeTakenMinutes > 0 ? Math.max(0, Math.round(finalWPM)) : 0;
 
@@ -457,14 +507,17 @@
 
             finalErrors = actualErrors;
             finalTime = Math.round(timeTakenSeconds);
-            finalWordsTyped = wordsTypedCount;
+            finalWordsAttempted = wordsAttemptedCount; 
+            finalRemainingWords = remainingWordsCount; // Store final remaining words
             finalScore = Math.round(finalWPM * (finalAccuracy / 100));
 
             wpmDisplay.textContent = finalWPM;
             accuracyDisplay.textContent = `${finalAccuracy}%`;
             errorsDisplay.textContent = finalErrors;
             timerDisplay.textContent = finalTime;
-            wordsTypedDisplay.textContent = finalWordsTyped;
+            wordsAttemptedDisplay.textContent = finalWordsAttempted; 
+            correctWordsDisplay.textContent = finalCorrectWords; 
+            remainingWordsDisplay.textContent = finalRemainingWords; // Update remaining words display
             scoreDisplay.textContent = finalScore;
 
             // Remove highlight from current char
@@ -491,11 +544,9 @@
                         className = 'incorrect';
                     }
                 } else {
-                    // If typedChar is undefined, it means user hasn't typed up to this point
-                    // or backspaced. We show the expected character with an error highlight.
                     className = 'incorrect';
                 }
-                finalTypedHtml += `<span class="${className}">${currentText[i]}</span>`; // Display the expected char in color
+                finalTypedHtml += `<span class="${className}">${currentText[i]}</span>`;
             }
             typedTextSpan.innerHTML = finalTypedHtml;
 
@@ -515,7 +566,7 @@
                     <p style="font-size: 18px;">Case Sensitive: ${isCaseSensitive ? 'Yes' : 'No'}</p>
                     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
                     <h2 style="color: #1d4ed8; margin-bottom: 10px;">Your Performance:</h2>
-                    <table style="width: 80%; margin: 0 auto; border-collapse: collapse;">
+                    <table style="width: 80%; margin: 0 auto; border-collapse: collapse; margin-bottom: 20px;">
                         <tr>
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">WPM (Words Per Minute):</td>
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWPM}</td>
@@ -533,14 +584,32 @@
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalTime} seconds</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Words Typed:</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWordsTyped}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Words Attempted:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWordsAttempted}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Correct Words:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalCorrectWords}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Remaining Words:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalRemainingWords}</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Score:</td>
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalScore}</td>
                         </tr>
                     </table>
+                    
+                    <h3 style="color: #1d4ed8; margin-bottom: 10px;">Original Text:</h3>
+                    <div style="text-align: left; padding: 10px; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px; word-wrap: break-word;">
+                        ${currentText}
+                    </div>
+
+                    <h3 style="color: #1d4ed8; margin-bottom: 10px;">Your Typed Text:</h3>
+                    <div style="text-align: left; padding: 10px; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 8px; word-wrap: break-word;">
+                        ${textInput.value}
+                    </div>
                 </div>
             `;
 
@@ -563,7 +632,7 @@
         textInput.addEventListener('input', handleInput);
         testDurationSelect.addEventListener('change', initializeTest);
         textCategorySelect.addEventListener('change', initializeTest); 
-        caseSensitiveCheckbox.addEventListener('change', initializeTest); // New event listener
+        caseSensitiveCheckbox.addEventListener('change', initializeTest);
 
         // Initialize the test when the page loads
         document.addEventListener('DOMContentLoaded', () => {
