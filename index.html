@@ -1,48 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ហាត់ម្រាមដៃ</title>
+    <title>Typing Speed Test</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for the blinking cursor in the text display */
         .highlight-current {
-            background-color: #d1fae5;
-            /* Light green for current character */
-            border-bottom: 2px solid #10b981;
-            /* Green underline for current character */
+            background-color: #d1fae5; /* Light green for current character */
+            border-bottom: 2px solid #10b981; /* Green underline for current character */
             animation: blink-caret 0.75s step-end infinite;
         }
 
         @keyframes blink-caret {
-
-            from,
-            to {
-                border-color: transparent;
-            }
-
-            50% {
-                border-color: #10b981;
-            }
+            from, to { border-color: transparent; }
+            50% { border-color: #10b981; }
         }
 
         /* Style for correct characters */
         .correct {
-            color: #10b981;
-            /* Green */
+            color: #10b981; /* Green */
         }
 
         /* Style for incorrect characters */
         .incorrect {
-            color: #ef4444;
-            /* Red */
-            background-color: #fee2e2;
-            /* Light red background for errors */
-            text-decoration: underline wavy #ef4444;
-            /* Wavy underline for errors */
+            color: #ef4444; /* Red */
+            background-color: #fee2e2; /* Light red background for errors */
+            text-decoration: underline wavy #ef4444; /* Wavy underline for errors */
         }
 
         /* Custom scrollbar for the text display */
@@ -65,40 +51,80 @@
         }
     </style>
 </head>
-
-<body
-    class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
 
     <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl flex flex-col items-center space-y-6">
 
-        <h1 class="text-4xl font-extrabold text-blue-600 mb-4">កម្មវិធីហាត់ម្រាមដៃ</h1>
+        <h1 class="text-4xl font-extrabold text-blue-600 mb-4">Typing Speed Test</h1>
+
+        <!-- Options: Duration Selection, Text Category, Lesson Selection -->
+        <div class="flex flex-wrap justify-center gap-4 mb-4 w-full">
+            <div class="flex items-center space-x-2">
+                <label for="test-duration" class="text-lg font-semibold text-gray-700">Duration:</label>
+                <select id="test-duration" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
+                    <option value="0">Full Text</option>
+                    <option value="30">30 Seconds</option>
+                    <option value="60">60 Seconds</option>
+                    <option value="120">120 Seconds</option>
+                </select>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <label for="text-category" class="text-lg font-semibold text-gray-700">Text Category:</label>
+                <select id="text-category" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
+                    <option value="general">General</option>
+                    <option value="quotes">Quotes</option>
+                    <option value="technical">Technical</option>
+                    <option value="lessons">Lessons</option>
+                </select>
+            </div>
+
+            <div id="lesson-selection-container" class="flex items-center space-x-2 hidden">
+                <label for="lesson-select" class="text-lg font-semibold text-gray-700">Select Lesson:</label>
+                <select id="lesson-select" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+        </div>
 
         <!-- Text Display Area -->
-        <div id="text-display"
-            class="text-display bg-gray-50 p-6 rounded-xl border border-gray-200 text-lg leading-relaxed tracking-wide text-gray-700 w-full min-h-[150px] max-h-[300px] overflow-y-auto resize-y transition-all duration-300 ease-in-out font-mono shadow-inner">
+        <div id="text-display" class="text-display bg-gray-50 p-6 rounded-xl border border-gray-200 text-lg leading-relaxed tracking-wide text-gray-700 w-full min-h-[150px] max-h-[300px] overflow-y-auto resize-y transition-all duration-300 ease-in-out font-mono shadow-inner">
             <span id="typed-text"></span><span id="current-char"></span><span id="remaining-text"></span>
         </div>
 
         <!-- User Input Area -->
-        <textarea id="text-input"
+        <textarea
+            id="text-input"
             class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-mono resize-none transition-all duration-300 ease-in-out shadow-md"
-            rows="5" placeholder="Start typing here..." disabled></textarea>
+            rows="5"
+            placeholder="Start typing here..."
+            disabled
+        ></textarea>
 
         <!-- Control Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <button id="start-button"
-                class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+            <button
+                id="start-button"
+                class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
+            >
                 Start Test
             </button>
-            <button id="reset-button"
-                class="bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+            <button
+                id="reset-button"
+                class="bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
+            >
                 Reset
+            </button>
+            <button
+                id="print-button"
+                class="bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
+            >
+                Print Results
             </button>
         </div>
 
         <!-- Results Display -->
-        <div
-            class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 flex flex-col md:flex-row justify-around items-center gap-6 text-center shadow-lg">
+        <div class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 flex flex-col md:flex-row justify-around items-center gap-6 text-center shadow-lg">
             <div class="flex flex-col items-center">
                 <span class="text-gray-500 text-sm font-semibold">WPM (Words Per Minute)</span>
                 <span id="wpm-display" class="text-5xl font-extrabold text-blue-800">0</span>
@@ -115,23 +141,51 @@
                 <span class="text-gray-500 text-sm font-semibold">Time (seconds)</span>
                 <span id="timer-display" class="text-5xl font-extrabold text-green-600">0</span>
             </div>
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 text-sm font-semibold">Score</span>
+                <span id="score-display" class="text-5xl font-extrabold text-indigo-800">0</span>
+            </div>
         </div>
     </div>
 
     <script>
-        // Array of predefined texts for the typing test
-        const texts = [
-            "របាយការណ៍ស្តីពីលទ្ធផលនៃកិច្ចប្រជុំត្រួតពិនិត្យវឌ្ឍនភាពការងារពិនិត្យបញ្ជីឈ្មោះ និងការចុះឈ្មោះបោះឆ្នោតឆ្នាំ២០២៥ លើកទី១របស់ក្រុមចុះឈ្មោះបោះឆ្នោត(ក.ច.ប)ជាមួយ ក្រុមប្រឹក្សាឃុំ និងអាជ្ញាធរពាក់ព័ន្ធ។",
-            "ខ underestimate the power of a good book. Reading can transport you to different worlds and expand your knowledge.",
-            "គ has revolutionized the way we live, work, and interact with each other, connecting people across the globe.",
-            "ឃ early bird catches the worm, but the second mouse gets the cheese. Always be prepared for opportunities and challenges.",
-            "ង makes perfect. Consistent effort and dedication are key to mastering any skill, whether it's typing or playing an instrument.",
-            "ច a world filled with information, critical thinking skills are more important than ever to distinguish fact from fiction.",
-            "ឆ ocean is a vast and mysterious place, home to countless species and hidden wonders yet to be fully explored.",
-            "ជ can be a relaxing and rewarding hobby, allowing you to experiment with flavors and create delicious meals.",
-            "ឈ intelligence is rapidly advancing, promising transformative changes across various industries and daily life.",
-            "ញ sun always shines brightest after the rain. Overcoming challenges makes successes even more meaningful."
-        ];
+        // Predefined texts categorized by type
+        const texts = {
+            general: [
+                "The quick brown fox jumps over the lazy dog. This is a classic pangram often used for testing typewriters and keyboards.",
+                "Never underestimate the power of a good book. Reading can transport you to different worlds and expand your knowledge.",
+                "Technology has revolutionized the way we live, work, and interact with each other, connecting people across the globe.",
+                "The early bird catches the worm, but the second mouse gets the cheese. Always be prepared for opportunities and challenges.",
+                "Practice makes perfect. Consistent effort and dedication are key to mastering any skill, whether it's typing or playing an instrument.",
+                "In a world filled with information, critical thinking skills are more important than ever to distinguish fact from fiction.",
+                "The ocean is a vast and mysterious place, home to countless species and hidden wonders yet to be fully explored.",
+                "Cooking can be a relaxing and rewarding hobby, allowing you to experiment with flavors and create delicious meals.",
+                "Artificial intelligence is rapidly advancing, promising transformative changes across various industries and daily life.",
+                "The sun always shines brightest after the rain. Overcoming challenges makes successes even more meaningful."
+            ],
+            quotes: [
+                "The only way to do great work is to love what you do. - Steve Jobs",
+                "Be the change that you wish to see in the world. - Mahatma Gandhi",
+                "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+                "It is during our darkest moments that we must focus to see the light. - Aristotle Onassis",
+                "Strive not to be a success, but rather to be of value. - Albert Einstein"
+            ],
+            technical: [
+                "HTTP (Hypertext Transfer Protocol) is the foundation of data communication for the World Wide Web.",
+                "JavaScript is a high-level, interpreted scripting language primarily used for client-side web development.",
+                "Cascading Style Sheets (CSS) describe how HTML elements are to be displayed on screen.",
+                "A git repository is a version control system that tracks changes in source code during software development.",
+                "API stands for Application Programming Interface, a set of defined rules that enable applications to interact."
+            ],
+            lessons: [
+                { id: 'home_row', name: 'Home Row (asdfjkl;)', content: 'asdfjkl;asdfjkl;asdfjkl;asdfjkl;asdfjkl;asdfjkl;' },
+                { id: 'top_row', name: 'Top Row (qwertyuiop)', content: 'qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop' },
+                { id: 'bottom_row', name: 'Bottom Row (zxcvbnm,./)', content: 'zxcvbnm,./zxcvbnm,./zxcvbnm,./zxcvbnm,./zxcvbnm,./' },
+                { id: 'common_words_1', name: 'Common Words 1', content: 'the and for but also with from that this there' },
+                { id: 'capital_letters', name: 'Capital Letters', content: 'The Quick Brown Fox Jumps Over The Lazy Dog. Practice your capital letters.' },
+                { id: 'numbers_symbols', name: 'Numbers & Symbols', content: '1234567890!@#$%^&*()_+-=[]{};\':",./<>?`~' },
+            ]
+        };
 
         // Get references to DOM elements
         const textDisplay = document.getElementById('text-display');
@@ -141,10 +195,16 @@
         const textInput = document.getElementById('text-input');
         const startButton = document.getElementById('start-button');
         const resetButton = document.getElementById('reset-button');
+        const printButton = document.getElementById('print-button');
         const wpmDisplay = document.getElementById('wpm-display');
         const accuracyDisplay = document.getElementById('accuracy-display');
         const errorsDisplay = document.getElementById('errors-display');
         const timerDisplay = document.getElementById('timer-display');
+        const scoreDisplay = document.getElementById('score-display');
+        const testDurationSelect = document.getElementById('test-duration');
+        const textCategorySelect = document.getElementById('text-category');
+        const lessonSelectionContainer = document.getElementById('lesson-selection-container'); // New element
+        const lessonSelect = document.getElementById('lesson-select'); // New element
 
         // Game state variables
         let currentText = '';
@@ -155,19 +215,64 @@
         let errors = 0;
         let isTestRunning = false;
         let correctCharsCount = 0; // To count only the characters typed correctly on the first attempt
+        let selectedDuration = 0; // 0 for full text, otherwise in seconds
+
+        // Variables to store final results for printing
+        let finalWPM = 0;
+        let finalAccuracy = 0;
+        let finalErrors = 0;
+        let finalTime = 0;
+        let finalScore = 0;
+
+        /**
+         * Populates the lesson select dropdown based on available lessons.
+         */
+        function populateLessonSelect() {
+            lessonSelect.innerHTML = ''; // Clear existing options
+            texts.lessons.forEach(lesson => {
+                const option = document.createElement('option');
+                option.value = lesson.id;
+                option.textContent = lesson.name;
+                lessonSelect.appendChild(option);
+            });
+        }
 
         /**
          * Initializes the typing test by setting up the text and resetting game state.
          */
         function initializeTest() {
-            // Select a random text from the array
-            currentText = texts[Math.floor(Math.random() * texts.length)];
+            const selectedCategory = textCategorySelect.value;
+
+            // Show/hide and enable/disable lesson selection based on category
+            if (selectedCategory === 'lessons') {
+                lessonSelectionContainer.classList.remove('hidden');
+                lessonSelect.disabled = false;
+                populateLessonSelect(); // Ensure lessons are loaded
+                // For lessons, force duration to "Full Text"
+                testDurationSelect.value = "0";
+                testDurationSelect.disabled = true;
+            } else {
+                lessonSelectionContainer.classList.add('hidden');
+                lessonSelect.disabled = true;
+                testDurationSelect.disabled = false;
+            }
+
+            // Determine which text to use
+            if (selectedCategory === 'lessons') {
+                const selectedLesson = texts.lessons.find(lesson => lesson.id === lessonSelect.value);
+                currentText = selectedLesson ? selectedLesson.content : texts.lessons[0].content; // Default to first lesson if not found
+            } else {
+                const categoryTexts = texts[selectedCategory] || texts.general; // Fallback to general if category not found
+                currentText = categoryTexts[Math.floor(Math.random() * categoryTexts.length)];
+            }
+
             charIndex = 0;
             errors = 0;
             startTime = 0;
             endTime = 0;
             correctCharsCount = 0;
             isTestRunning = false;
+            selectedDuration = parseInt(testDurationSelect.value); // Re-read duration after potential change for lessons
 
             // Clear input and disable it
             textInput.value = '';
@@ -179,8 +284,13 @@
             accuracyDisplay.textContent = '0%';
             errorsDisplay.textContent = '0';
             timerDisplay.textContent = '0';
+            scoreDisplay.textContent = '0'; // Reset score display
             startButton.textContent = 'Start Test';
             startButton.disabled = false; // Enable start button
+            printButton.disabled = true; // Disable print button initially
+
+            // Enable/disable category select (duration/lesson select handled above)
+            textCategorySelect.disabled = false;
 
             // Display the text to be typed, highlighting the first character
             updateTextDisplay();
@@ -210,7 +320,6 @@
                 currentCharSpan.classList.remove('highlight-current');
             }
 
-
             // Display the remaining text
             remainingTextSpan.textContent = remaining;
 
@@ -236,7 +345,7 @@
          * Starts the typing test.
          */
         function startTest() {
-            if (isTestRunning) return; // Prevent starting if already running
+            if (!currentText || isTestRunning) return; // Prevent starting if already running or no text loaded
 
             isTestRunning = true;
             textInput.disabled = false;
@@ -244,12 +353,23 @@
             startTime = new Date().getTime(); // Record start time
             startButton.textContent = 'Typing...';
             startButton.disabled = true; // Disable start button during test
+            printButton.disabled = true; // Disable print button during test
+
+            // Disable options during test
+            testDurationSelect.disabled = true;
+            textCategorySelect.disabled = true;
+            lessonSelect.disabled = true; // Disable lesson select during test
 
             // Start the timer
             timerInterval = setInterval(() => {
                 const currentTime = new Date().getTime();
                 const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
                 timerDisplay.textContent = elapsedSeconds;
+
+                // Check for duration limit if set
+                if (selectedDuration > 0 && elapsedSeconds >= selectedDuration) {
+                    endTest();
+                }
             }, 1000);
 
             // Update display to show blinking cursor
@@ -264,25 +384,25 @@
             if (!isTestRunning) return; // Ignore input if test not running
 
             const typedChar = event.data; // The character just typed
-            const expectedChar = currentText[charIndex];
+            let expectedChar = currentText[charIndex];
 
             // If the user backspaces, adjust charIndex and potentially errors
             if (event.inputType === 'deleteContentBackward') {
                 if (charIndex > 0) {
                     charIndex--;
-                    // Revert highlighting for the character we backspaced over
-                    // This simple example just moves back, more complex error tracking might be needed
+                    // Note: This simple example doesn't re-evaluate character correctness,
+                    // but moves the cursor back. For complex error tracking, more logic is needed.
                 }
             } else {
+                // Always perform case-insensitive comparison
+                let match = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
+
                 // Check if the typed character matches the expected character
-                if (typedChar === expectedChar) {
+                if (match) {
                     correctCharsCount++;
                 } else {
                     errors++;
                     errorsDisplay.textContent = errors;
-                    // Apply 'incorrect' class for visual feedback on error (briefly)
-                    // This is a simpler way to show error feedback, more robust would involve
-                    // adding the class to the typed character in typedTextSpan
                 }
                 charIndex++; // Move to the next character
             }
@@ -290,7 +410,7 @@
             // Update the display with current progress
             updateTextDisplay();
 
-            // Check if the test is completed
+            // Check if the test is completed by typing all characters
             if (charIndex === currentText.length) {
                 endTest();
             }
@@ -300,7 +420,7 @@
          * Ends the typing test and calculates results.
          */
         function endTest() {
-            if (!isTestRunning) return;
+            if (!isTestRunning) return; // Ensure test is actually running before ending
 
             isTestRunning = false;
             endTime = new Date().getTime(); // Record end time
@@ -308,41 +428,125 @@
             textInput.disabled = true; // Disable input
             startButton.textContent = 'Restart Test';
             startButton.disabled = false; // Enable restart button
+            printButton.disabled = false; // Enable print button
+
+            // Enable options (lesson select handled in initializeTest based on category)
+            testDurationSelect.disabled = false;
+            textCategorySelect.disabled = false;
+
 
             const timeTakenSeconds = (endTime - startTime) / 1000;
             const timeTakenMinutes = timeTakenSeconds / 60;
 
             // Calculate WPM (Words Per Minute): (total characters typed / 5) / time in minutes
-            // Only count characters that were correctly typed on the first attempt
-            const grossWPM = (currentText.length / 5) / timeTakenMinutes;
-            const netWPM = ((correctCharsCount - errors) / 5) / timeTakenMinutes;
-            const finalWPM = Math.max(0, Math.round(netWPM)); // WPM cannot be negative
+            // Use charIndex for typed characters in this round, as test might end by time
+            const grossWPM = (charIndex / 5) / timeTakenMinutes;
+            finalWPM = ((correctCharsCount - errors) / 5) / timeTakenMinutes;
+            finalWPM = timeTakenMinutes > 0 ? Math.max(0, Math.round(finalWPM)) : 0; // WPM cannot be negative, handle division by zero
 
-            // Calculate Accuracy: (correctly typed chars / total chars typed) * 100
-            // Total characters typed is charIndex (length of passage)
-            const accuracy = currentText.length > 0 ? Math.max(0, Math.round(((currentText.length - errors) / currentText.length) * 100)) : 0;
+            // Calculate Accuracy: (correctly typed chars / total chars typed so far) * 100
+            // Total characters typed is charIndex (number of characters the user attempted to type)
+            finalAccuracy = charIndex > 0 ? Math.max(0, Math.round(((charIndex - errors) / charIndex) * 100)) : 0;
+
+            finalErrors = errors;
+            finalTime = Math.round(timeTakenSeconds);
+
+            // Calculate Score: A weighted combination of WPM and Accuracy
+            // Example: WPM * (Accuracy / 100) - provides an "effective WPM"
+            finalScore = Math.round(finalWPM * (finalAccuracy / 100));
+
 
             wpmDisplay.textContent = finalWPM;
-            accuracyDisplay.textContent = `${accuracy}%`;
-            errorsDisplay.textContent = errors;
-            timerDisplay.textContent = Math.round(timeTakenSeconds);
+            accuracyDisplay.textContent = `${finalAccuracy}%`;
+            errorsDisplay.textContent = finalErrors;
+            timerDisplay.textContent = finalTime;
+            scoreDisplay.textContent = finalScore; // Update score display
 
             // Remove highlight from current char
             currentCharSpan.classList.remove('highlight-current');
-            // Final update to display all typed text as correct
-            typedTextSpan.innerHTML = currentText.split('').map(char => `<span class="correct">${char}</span>`).join('');
+
+            // Final update to display all typed text as correct if test completed fully,
+            // or highlight typed characters correctly/incorrectly up to charIndex if ended by time.
+            let finalTypedHtml = '';
+            for (let i = 0; i < charIndex; i++) {
+                // Always use case-insensitive comparison for display
+                let isCharCorrect = (textInput.value[i]?.toLowerCase() === currentText[i]?.toLowerCase());
+                if (isCharCorrect) {
+                    finalTypedHtml += `<span class="correct">${currentText[i]}</span>`;
+                } else {
+                    finalTypedHtml += `<span class="incorrect">${currentText[i]}</span>`;
+                }
+            }
+            typedTextSpan.innerHTML = finalTypedHtml;
+
             currentCharSpan.textContent = ''; // Clear current char
             remainingTextSpan.textContent = ''; // Clear remaining text
         }
 
+        /**
+         * Generates and prints the test results.
+         */
+        function printResults() {
+            const printContent = `
+                <div style="font-family: Arial, sans-serif; padding: 20px; text-align: center;">
+                    <h1 style="color: #2563eb;">Typing Test Results</h1>
+                    <p style="font-size: 18px;">Test Duration: ${selectedDuration === 0 ? 'Full Text' : selectedDuration + ' seconds'}</p>
+                    <p style="font-size: 18px;">Text Category: ${textCategorySelect.value.charAt(0).toUpperCase() + textCategorySelect.value.slice(1)}</p>
+                    ${textCategorySelect.value === 'lessons' ? `<p style="font-size: 18px;">Lesson: ${lessonSelect.options[lessonSelect.selectedIndex].text}</p>` : ''}
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
+                    <h2 style="color: #1d4ed8; margin-bottom: 10px;">Your Performance:</h2>
+                    <table style="width: 80%; margin: 0 auto; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">WPM (Words Per Minute):</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWPM}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Accuracy:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalAccuracy}%</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Errors:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalErrors}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Time Taken:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalTime} seconds</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">Score:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalScore}</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+
+            // Open a new window for printing
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(printContent);
+            printWindow.document.close(); // Close the document stream for new window
+
+            // Wait for content to render, then print
+            printWindow.onload = function() {
+                printWindow.print();
+                printWindow.close(); // Close the print window after printing
+            };
+        }
+
+
         // Event Listeners
         startButton.addEventListener('click', startTest);
         resetButton.addEventListener('click', initializeTest);
+        printButton.addEventListener('click', printResults);
         textInput.addEventListener('input', handleInput);
+        testDurationSelect.addEventListener('change', initializeTest);
+        textCategorySelect.addEventListener('change', initializeTest); // Changed to handle lesson selection
+        lessonSelect.addEventListener('change', initializeTest); // New event listener for lesson selection
 
         // Initialize the test when the page loads
-        document.addEventListener('DOMContentLoaded', initializeTest);
+        document.addEventListener('DOMContentLoaded', () => {
+            populateLessonSelect(); // Populate lessons first
+            initializeTest(); // Then initialize the test
+        });
     </script>
 </body>
-
 </html>
