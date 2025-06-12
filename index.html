@@ -1,47 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Speed Test</title>
+    <title>កម្មវិធីហាត់ម្រាមដៃ</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Kantumruy Pro -->
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
-        /* Apply Kantumruy Pro font to the body */
-        body {
-            font-family: 'Kantumruy Pro', sans-serif;
+        /* Define your local font for Khmer Kep with multiple formats for better compatibility */
+        @font-face {
+            font-family: 'Khmer Kep';
+            /* Name for the local font */
+            src: url('./KhmerKep.ttf') format('truetype');
+            /* Fallback to TTF */
+            font-weight: 400;
+            /* Match the weight of your font file */
+            font-style: normal;
+            font-display: swap;
+            /* Helps with font loading performance */
         }
 
-        /* Ensure font-mono elements also use Kantumruy Pro but retain monospace fallback */
-        .font-mono {
-            font-family: 'Kantumruy Pro', monospace;
+       /* Apply Kantumruy Pro to the body primarily, then Khmer Kep, then generic sans-serif */
+        body {
+            font-family: 'Kantumruy Pro', 'Khmer Kep', sans-serif;
+        }
+
+        /* Apply Khmer Kep to the text display and input area specifically */
+        #text-display,
+        #text-input {
+            font-family: 'Khmer Kep', 'Kantumruy Pro', monospace;
+            /* Prioritize Khmer Kep for these specific elements */
         }
 
         /* Custom styles for the blinking cursor in the text display */
         .highlight-current {
-            background-color: #d1fae5; /* Light green for current character */
-            border-bottom: 2px solid #10b981; /* Green underline for current character */
+            background-color: #d1fae5;
+            /* Light green for current character */
+            border-bottom: 2px solid #10b981;
+            /* Green underline for current character */
             animation: blink-caret 0.75s step-end infinite;
         }
 
         @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: #10b981; }
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: #10b981;
+            }
         }
 
         /* Style for correct characters */
         .correct {
-            color: #10b981; /* Green */
+            color: #10b981;
+            /* Green */
         }
 
         /* Style for incorrect characters - only applied at the end for uncorrected errors */
         .incorrect {
-            color: #ef4444; /* Red */
-            background-color: #fee2e2; /* Light red background for errors */
-            text-decoration: underline wavy #ef4444; /* Wavy underline for errors */
+            color: #ef4444;
+            /* Red */
+            background-color: #fee2e2;
+            /* Light red background for errors */
+            text-decoration: wavy underline #ef4444;
+            /* Wavy underline for errors */
         }
 
         /* Custom scrollbar for the text display */
@@ -79,26 +108,33 @@
 
         .modal-content {
             background-color: white;
-            padding: 2.5rem; /* Equivalent to p-10 */
-            border-radius: 1rem; /* Equivalent to rounded-xl */
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Equivalent to shadow-xl */
+            padding: 2.5rem;
+            /* Equivalent to p-10 */
+            border-radius: 1rem;
+            /* Equivalent to rounded-xl */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            /* Equivalent to shadow-xl */
             text-align: center;
             max-width: 90%;
             width: 400px;
         }
     </style>
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex flex-col justify-between items-center p-4 text-gray-800">
+
+<body
+    class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen flex flex-col justify-between items-center p-4 text-gray-800">
 
     <!-- Top Navigation Bar -->
     <header class="bg-blue-700 p-4 shadow-md w-full">
         <div class="container mx-auto flex items-center justify-center">
-            <img src="https://placehold.co/40x40/ADD8E6/000000?text=Logo" alt="Typing Test Logo" class="h-10 w-10 rounded-full mr-3">
+            <img src="https://placehold.co/40x40/ADD8E6/000000?text=Logo" alt="Typing Test Logo"
+                class="h-10 w-10 rounded-full mr-3">
             <h2 class="text-3xl font-extrabold text-white">កម្មវិធីហាត់ម្រាមដៃ</h2>
         </div>
     </header>
 
-    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl flex flex-col items-center space-y-6 my-auto">
+    <div
+        class="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl flex flex-col items-center space-y-6 my-auto">
 
         <h1 class="text-4xl font-extrabold text-blue-600 mb-4">កម្មវិធីហាត់ម្រាមដៃ</h1>
 
@@ -106,9 +142,10 @@
         <div class="flex flex-wrap justify-center gap-4 mb-4 w-full">
             <div class="flex items-center space-x-2">
                 <label for="user-name" class="text-lg font-semibold text-gray-700">ឈ្មោះ:</label>
-                <select id="user-name" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
+                <select id="user-name"
+                    class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
                     <option value="">ជ្រើសរើសឈ្មោះ</option>
-                    <option value="Alice">Alice</option>
+                    <option value="ជា កុសល">ជា កុសល</option>
                     <option value="Bob">Bob</option>
                     <option value="Charlie">Charlie</option>
                     <option value="Diana">Diana</option>
@@ -118,74 +155,70 @@
 
             <div class="flex items-center space-x-2">
                 <label for="test-duration" class="text-lg font-semibold text-gray-700">រយៈពេល:</label>
-                <select id="test-duration" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
+                <select id="test-duration"
+                    class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
                     <option value="0">អត្ថបទពេញ</option>
                     <option value="30">30 វិនាទី</option>
                     <option value="60">60 វិនាទី</option>
                     <option value="120">120 វិនាទី</option>
+                    <option value="420">420 វិនាទី</option> <!-- Added 420 seconds option -->
                 </select>
             </div>
 
             <div class="flex items-center space-x-2">
                 <label for="text-category" class="text-lg font-semibold text-gray-700">ប្រភេទអត្ថបទ:</label>
-                <select id="text-category" class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
-                    <option value="general">ទូទៅ</option>
-                    <option value="quotes">សម្រង់</option>
-                    <option value="technical">បច្ចេកទេស</option>
-                    <option value="programming_concepts">គោលគំនិតកម្មវិធី</option>
-                    <option value="science_facts">ការពិតវិទ្យាសាស្ត្រ</option>
-                    <option value="history_events">ព្រឹត្តិការណ៍ប្រវត្តិសាស្ត្រ</option>
-                    <option value="literature_excerpts">អត្ថបទអក្សរសាស្ត្រ</option>
-                    <option value="food_recipes">រូបមន្តអាហារ</option>
-                    <option value="travel_descriptions">ការពិពណ៌នាអំពីការធ្វើដំណើរ</option>
-                    <option value="daily_life">ជីវិតប្រចាំថ្ងៃ</option>
+                <select id="text-category"
+                    class="p-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200">
+                    <option value="Lesson_1">មេរៀនទី១</option>
+                    <option value="Lesson_2">មេរៀនទី២</option>
+                    <option value="Lesson_3">មេរៀនទី៣</option>
+                    <option value="Lesson_4">មេរៀនទី៤</option>
+                    <option value="Lesson_5">មេរៀនទី៥</option>
+                    <option value="Lesson_6">មេរៀនទី៦</option>
+                    <option value="Lesson_7">មេរៀនទី៧</option>
+                    <option value="Lesson_8">មេរៀនទី៨</option>
+                    <option value="Lesson_9">មេរៀនទី៩</option>
+                    <option value="Lesson_10">មេរៀនទី១០</option>
                 </select>
             </div>
 
             <div class="flex items-center space-x-2">
-                <input type="checkbox" id="case-sensitive" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                <input type="checkbox" id="case-sensitive"
+                    class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500" checked>
                 <label for="case-sensitive" class="text-lg font-semibold text-gray-700">ប្រកាន់អក្សរធំ/តូច</label>
             </div>
         </div>
 
         <!-- Text Display Area -->
-        <div id="text-display" class="text-display bg-gray-50 p-6 rounded-xl border border-gray-200 text-lg leading-relaxed tracking-wide text-gray-700 w-full min-h-[150px] max-h-[300px] overflow-y-auto resize-y transition-all duration-300 ease-in-out font-mono shadow-inner">
+        <div id="text-display"
+            class="text-display bg-gray-50 p-6 rounded-xl border border-gray-200 text-xl leading-relaxed tracking-wide text-gray-700 w-full min-h-[150px] max-h-[300px] overflow-y-auto resize-y transition-all duration-300 ease-in-out font-mono shadow-inner">
             <span id="typed-text"></span><span id="current-char"></span><span id="remaining-text"></span>
         </div>
 
         <!-- User Input Area -->
-        <textarea
-            id="text-input"
-            class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-mono resize-none transition-all duration-300 ease-in-out shadow-md"
-            rows="5"
-            placeholder="ចាប់ផ្ដើមវាយនៅទីនេះ..."
-            disabled
-        ></textarea>
+        <textarea id="text-input"
+            class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 text-xl font-mono resize-none transition-all duration-300 ease-in-out shadow-md"
+            rows="5" placeholder="ចាប់ផ្ដើមវាយនៅទីនេះ..." disabled></textarea>
 
         <!-- Control Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <button
-                id="start-button"
-                class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
-            >
+            <button id="start-button"
+                class="bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
                 ចាប់ផ្ដើមសាកល្បង
             </button>
-            <button
-                id="reset-button"
-                class="bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
-            >
+            <button id="reset-button"
+                class="bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
                 កំណត់ឡើងវិញ
             </button>
-            <button
-                id="print-button"
-                class="bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
-            >
+            <button id="print-button"
+                class="bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95">
                 បោះពុម្ពលទ្ធផល
             </button>
         </div>
 
         <!-- Results Display -->
-        <div class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 text-center shadow-lg">
+        <div
+            class="w-full bg-blue-50 p-6 rounded-xl border border-blue-200 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 text-center shadow-lg">
             <div class="flex flex-col items-center">
                 <span class="text-gray-500 text-sm font-semibold">WPM (ពាក្យក្នុងមួយនាទី)</span>
                 <span id="wpm-display" class="text-5xl font-extrabold text-blue-800">0</span>
@@ -223,91 +256,92 @@
 
     <!-- Footer -->
     <footer class="bg-blue-700 p-4 text-center text-white text-sm w-full mt-8">
-        <p>&copy; 2024 កម្មវិធីហាត់ម្រាមដៃ. រក្សាសិទ្ធិគ្រប់យ៉ាង។</p>
+        <p>&copy; 2025 កម្មវិធីហាត់ម្រាមដៃ. រក្សាសិទ្ធិគ្រប់យ៉ាង។</p>
     </footer>
 
     <!-- Custom Message Box Modal -->
     <div id="message-modal" class="modal-backdrop hidden">
         <div class="modal-content">
             <p id="modal-message" class="text-xl font-semibold mb-6"></p>
-            <button id="modal-close-button" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow hover:bg-blue-700 transition-colors duration-200">
-                យល់ព្រម
+            <button id="modal-close-button"
+                class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow hover:bg-blue-700 transition-colors duration-200">
+                យល់ព្រោម
             </button>
         </div>
     </div>
 
     <script type="module">
-        // Predefined texts categorized by type
+        // Predefined texts categorized by type (in Khmer)
         const texts = {
-            general: [
-                "កញ្ជ្រោងពណ៌ត្នោតរហ័សលោតពីលើឆ្កែខ្ជិល។ នេះជាប្រយោគពេញលេញមួយដែលត្រូវបានប្រើញឹកញាប់សម្រាប់ការសាកល្បងម៉ាស៊ីនវាយអក្សរ និងក្ដារចុច។",
-                "កុំមើលស្រាលថាមពលនៃសៀវភៅល្អមួយក្បាល។ ការអានអាចនាំអ្នកទៅកាន់ពិភពផ្សេងៗ និងពង្រីកចំណេះដឹងរបស់អ្នក។",
-                "បច្ចេកវិទ្យាបានផ្លាស់ប្ដូររបៀបរស់នៅ ការងារ និងការប្រាស្រ័យទាក់ទងរបស់យើង ដោយភ្ជាប់មនុស្សទូទាំងពិភពលោក។",
-                "បក្សីក្រោកពីព្រលឹមចាប់បានដង្កូវ ប៉ុន្តែកណ្ដុរទីពីរបានឈីស។ ត្រៀមខ្លួនជានិច្ចសម្រាប់ឱកាស និងឧបសគ្គ។",
-                "ការអនុវត្តធ្វើឲ្យល្អឥតខ្ចោះ។ ការខិតខំប្រឹងប្រែងជាប់លាប់ និងការលះបង់គឺជាគន្លឹះដើម្បីស្ទាត់ជំនាញណាមួយ មិនថាជាការវាយអក្សរ ឬការលេងឧបករណ៍តន្ត្រីនោះទេ។",
-                "នៅក្នុងពិភពពោរពេញដោយព័ត៌មាន ជំនាញគិតពិចារណាគឺសំខាន់ជាងពេលណាៗទាំងអស់ដើម្បីបែងចែកការពិតពីការប្រឌិត។",
-                "មហាសមុទ្រគឺជាកន្លែងដ៏ធំទូលាយ និងអាថ៌កំបាំង ដែលជាជម្រករបស់សត្វរាប់មិនអស់ និងភាពអស្ចារ្យដែលលាក់កំបាំងដែលមិនទាន់ត្រូវបានរុករកពេញលេញ។",
-                "ការធ្វើម្ហូបអាចជាចំណង់ចំណូលចិត្តដែលបន្ធូរអារម្មណ៍ និងផ្ដល់រង្វាន់ ដែលអនុញ្ញាតឲ្យអ្នកពិសោធន៍រសជាតិ និងបង្កើតអាហារឆ្ងាញ់ៗ។",
-                "បញ្ញាសិប្បនិម្មិតកំពុងរីកចម្រើនយ៉ាងឆាប់រហ័ស ដែលសន្យាថានឹងមានការផ្លាស់ប្ដូរយ៉ាងខ្លាំងក្លាទៅលើឧស្សាហកម្ម និងជីវិតប្រចាំថ្ងៃផ្សេងៗ។",
-                "ព្រះអាទិត្យតែងតែរះភ្លឺបំផុតក្រោយពេលភ្លៀង។ ការយកឈ្នះឧបសគ្គធ្វើឲ្យជោគជ័យមានន័យកាន់តែខ្លាំង។"
+            Lesson_1: [
+                "រប‍ើស ស៊‍ឺន សាវតា1កញ្ជ្រោងពណ៌ត្នោតរហ័សលោតពីលើឆ្កែខ្ជិល។ នេះជាប្រយោគពេញលេញមួយដែលត្រូវបានប្រើញឹកញាប់សម្រាប់ការសាកល្បងម៉ាស៊ីនវាយអក្សរ និងក្ដារចុច។",
+                "ស៊‍ឺន សាវតា2កុំមើលស្រាលថាមពលនៃសៀវភៅល្អមួយក្បាល។ ការអានអាចនាំអ្នកទៅកាន់ពិភពផ្សេងៗ និងពង្រីកចំណេះដឹងរបស់អ្នក។",
+                "3បច្ចេកវិទ្យាបានផ្លាស់ប្ដូររបៀបរស់នៅ ការងារ និងការប្រាស្រ័យទាក់ទងរបស់យើង ដោយភ្ជាប់មនុស្សទូទាំងពិភពលោក។",
+                "4បក្សីក្រោកពីព្រលឹមចាប់បានដង្កូវ ប៉ុន្តែកណ្ដុរទីពីរបានឈីស។ ត្រៀមខ្លួនជានិច្ចសម្រាប់ឱកាស និងឧបសគ្គ។",
+                "5ការអនុវត្តធ្វើឲ្យល្អឥតខ្ចោះ។ ការខិតខំប្រឹងប្រែងជាប់លាប់ និងការលះបង់គឺជាគន្លឹះដើម្បីស្ទាត់ជំនាញណាមួយ មិនថាជាការវាយអក្សរ ឬការលេងឧបករណ៍តន្ត្រីនោះទេ។",
+                "6នៅក្នុងពិភពពោរពេញដោយព័ត៌មាន ជំនាញគិតពិចារណាគឺសំខាន់ជាងពេលណាៗទាំងអស់ដើម្បីបែងចែកការពិតពីការប្រឌិត។",
+                "7មហាសមុទ្រគឺជាកន្លែងដ៏ធំទូលាយ និងអាថ៌កំបាំង ដែលជាជម្រករបស់សត្វរាប់មិនអស់ និងភាពអស្ចារ្យដែលលាក់កំបាំងដែលមិនទាន់ត្រូវបានរុករកពេញលេញ។",
+                "8ការធ្វើម្ហូបអាចជាចំណង់ចំណូលចិត្តដែលបន្ធូរអារម្មណ៍ និងផ្ដល់រង្វាន់ ដែលអនុញ្ញាតឲ្យអ្នកពិសោធន៍រសជាតិ និងបង្កើតអាហារឆ្ងាញ់ៗ។",
+                "9បញ្ញាសិប្បនិម្មិតកំពុងរីកចម្រើនយ៉ាងឆាប់រហ័ស ដែលសន្យាថានឹងមានការផ្លាស់ប្ដូរយ៉ាងខ្លាំងក្លាទៅលើឧស្សាហកម្ម និងជីវិតប្រចាំថ្ងៃផ្សេងៗ។",
+                "10ព្រះអាទិត្យតែងតែរះភ្លឺបំផុតក្រោយពេលភ្លៀង។ ការយកឈ្នះឧបសគ្គធ្វើឲ្យជោគជ័យមានន័យកាន់តែខ្លាំង។"
             ],
-            quotes: [
+            Lesson_2: [
                 "មធ្យោបាយតែមួយគត់ដើម្បីធ្វើការងារដ៏អស្ចារ្យគឺស្រលាញ់អ្វីដែលអ្នកធ្វើ។ - Steve Jobs",
                 "ចូរធ្វើជាការផ្លាស់ប្ដូរដែលអ្នកចង់ឃើញនៅក្នុងពិភពលោក។ - Mahatma Gandhi",
                 "អនាគតជារបស់អ្នកដែលជឿលើភាពស្រស់ស្អាតនៃក្ដីសុបិនរបស់ពួកគេ។ - Eleanor Roosevelt",
                 "នៅអំឡុងពេលដ៏ងងឹតបំផុតរបស់យើង យើងត្រូវផ្ចង់អារម្មណ៍ដើម្បីមើលឃើញពន្លឺ។ - Aristotle Onassis",
                 "ខិតខំកុំឲ្យជោគជ័យ ប៉ុន្តែត្រូវខិតខំឲ្យមានតម្លៃ។ - Albert Einstein"
             ],
-            technical: [
+            Lesson_3: [
                 "HTTP (Hypertext Transfer Protocol) គឺជាមូលដ្ឋានគ្រឹះនៃការទំនាក់ទំនងទិន្នន័យសម្រាប់ World Wide Web។",
                 "JavaScript គឺជាភាសាស្គ្រីបកម្រិតខ្ពស់ដែលត្រូវបានបកស្រាយជាចម្បងសម្រាប់អភិវឌ្ឍន៍គេហទំព័រផ្នែកខាងម៉ាស៊ីនភ្ញៀវ។",
-                "Cascading Style Sheets (CSS) ពិពណ៌នាអំពីរបៀបដែលធាតុ HTML ត្រូវបង្ហាញនៅលើអេក្រង់។",
-                "ឃ្លាំង git គឺជាប្រព័ន្ធគ្រប់គ្រងកំណែដែលតាមដានការផ្លាស់ប្ដូរនៅក្នុងកូដប្រភពក្នុងអំឡុងពេលអភិវឌ្ឍន៍កម្មវិធី។",
+                "Cascading Style Sheets (CSS) ពិពណ៌នាអំពីរបៀបដែលធាតុ HTML ត្រូវបង្ហាញនៅលើអេក្រ្រង់។",
+                "A git repository គឺជាប្រព័ន្ធគ្រប់គ្រងកំណែដែលតាមដានការផ្លាស់ប្ដូរនៅក្នុងកូដប្រភពក្នុងអំឡុងពេលអភិវឌ្ឍន៍កម្មវិធី។",
                 "API តំណាងឲ្យ Application Programming Interface ដែលជាសំណុំនៃច្បាប់ដែលបានកំណត់ដែលអនុញ្ញាតឲ្យកម្មវិធីអាចទំនាក់ទំនងគ្នាបាន។"
             ],
-            programming_concepts: [
+            Lesson_4: [
                 "អថេរគឺជាឈ្មោះនិមិត្តសញ្ញាដែលភ្ជាប់ជាមួយតម្លៃ ហើយតម្លៃដែលភ្ជាប់នោះអាចត្រូវបានផ្លាស់ប្ដូរ។ វាជាគំនិតមូលដ្ឋាននៅក្នុងការសរសេរកម្មវិធី។",
                 "រង្វិលជុំគឺជាសេចក្ដីថ្លែងការណ៍លំហូរត្រួតពិនិត្យដែលអនុញ្ញាតឲ្យកូដត្រូវបានប្រតិបត្តិឡើងវិញដោយផ្អែកលើលក្ខខណ្ឌប៊ូលីនដែលបានផ្ដល់ឲ្យ។",
                 "អនុគមន៍គឺជាប្លុកកូដដែលត្រូវបានរចនាឡើងដើម្បីអនុវត្តភារកិច្ចជាក់លាក់មួយ។ ពួកវាត្រូវបានប្រតិបត្តិនៅពេលដែល 'អ្វីមួយ' ហៅពួកវា។",
                 "ក្បួនដោះស្រាយគឺជាជំហានៗ ឬរូបមន្តសម្រាប់ដោះស្រាយបញ្ហា ជាពិសេសដោយកុំព្យូទ័រ។",
                 "ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ (OOP) គឺជាគំរូមួយដែលផ្អែកលើគំនិតនៃ 'វត្ថុ' ដែលអាចផ្ទុកទិន្នន័យ និងកូដ។"
             ],
-            science_facts: [
-                "រស្មីសំយោគគឺជាដំណើរការដែលរុក្ខជាតិ សារាយ និងបាក់តេរីមួយចំនួនប្រើដើម្បីបំលែងថាមពលពន្លឺទៅជាថាមពលគីមី។",
+            Lesson_5: [
+                "រស្មីសំយោគគឺជាដំណើរការដែលរុក្ខជាតិ សារាយ និងបាក់តេរីមួយចំនួនប្រើដើម្បីបំលែងថាមពពលពន្លឺទៅជាថាមពលគីមី។",
                 "ខួរក្បាលមនុស្សមានប្រហែល 86 ពាន់លានណឺរ៉ូន ដែលធ្វើឲ្យវាក្លាយជាសរីរាង្គស្មុគស្មាញបំផុតនៅក្នុងរាងកាយ។",
                 "ទំនាញគឺជាកម្លាំងមូលដ្ឋាននៃធម្មជាតិដែលទាក់ទាញវត្ថុណាមួយដែលមានម៉ាស់ ឬថាមពលឆ្ពោះទៅរកគ្នាទៅវិញទៅមក។",
                 "DNA ឬអាស៊ីត deoxyribonucleic គឺជាសម្ភារៈតំណពូជនៅក្នុងមនុស្ស និងសារពាង្គកាយស្ទើរតែទាំងអស់។",
                 "ល្បឿនពន្លឺនៅក្នុងកន្លែងទំនេរគឺប្រហែល 299,792,458 ម៉ែត្រក្នុងមួយវិនាទី។"
             ],
-            history_events: [
+            Lesson_6: [
                 "ការដួលរលំនៃជញ្ជាំងប៊ែរឡាំងនៅឆ្នាំ 1989 តំណាងឲ្យការបញ្ចប់នៃសង្គ្រាមត្រជាក់ និងការបង្រួបបង្រួមអាល្លឺម៉ង់ឡើងវិញ។",
-                " Magna Carta ដែលបានចុះហត្ថលេខានៅឆ្នាំ 1215 គឺជាឯកសារដំបូងបង្អស់មួយដែលកំណត់អំណាចរបស់រាជានិយមអង់គ្លេស។",
+                "The Magna Carta, ដែលបានចុះហត្ថលេខានៅឆ្នាំ 1215 គឺជាឯកសារដំបូងបង្អស់មួយដែលកំណត់អំណាចរបស់រាជានិយមអង់គ្លេស។",
                 "សង្គ្រាមលោកលើកទី II ពីឆ្នាំ 1939 ដល់ឆ្នាំ 1945 បានពាក់ព័ន្ធនឹងប្រទេសភាគច្រើនលើសលប់នៃពិភពលោក និងជាជម្លោះដ៏សាហាវបំផុតក្នុងប្រវត្តិសាស្ត្រមនុស្សជាតិ។",
                 "បដិវត្តន៍ឧស្សាហកម្មដែលបានចាប់ផ្តើមនៅចុងសតវត្សទី 18 បានផ្លាស់ប្តូរសេដ្ឋកិច្ចពីកសិកម្មទៅជាឧស្សាហកម្ម។",
                 "ការចុះចតលើឋានព្រះច័ន្ទរបស់ Apollo 11 នៅឆ្នាំ 1969 បានកត់សម្គាល់សមិទ្ធផលដ៏សំខាន់មួយក្នុងការរុករកអវកាសរបស់មនុស្ស។"
             ],
-            literature_excerpts: [
+            Lesson_7: [
                 "វាជាពេលវេលាដ៏ល្អបំផុត វាជាពេលវេលាដ៏អាក្រក់បំផុត វាជាយុគសម័យនៃប្រាជ្ញា វាជាយុគសម័យនៃភាពល្ងង់ខ្លៅ។",
                 "សត្វទាំងអស់ស្មើគ្នា ប៉ុន្តែសត្វខ្លះស្មើគ្នាជាងសត្វដទៃទៀត។",
                 "ហៅខ្ញុំថា Ishmael។ ជាច្រើនឆ្នាំកន្លងទៅ — កុំខ្វល់ថាយូរប៉ុណ្ណាឲ្យប្រាកដ — ដោយមានលុយតិចតួច ឬគ្មានសោះនៅក្នុងកាបូបរបស់ខ្ញុំ ហើយគ្មានអ្វីពិសេសគួរឲ្យចាប់អារម្មណ៍នៅមាត់ច្រាំង ខ្ញុំគិតថាខ្ញុំនឹងជិះទូកលេងបន្តិច ហើយមើលផ្នែកទឹកនៃពិភពលោក។",
                 "ប្រាជ្ញាពិតតែមួយគត់គឺការដឹងថាអ្នកមិនដឹងអ្វីសោះ។",
                 "ត្រូវឬមិនត្រូវ នោះគឺជាសំណួរ: ថាតើវាថ្លៃថ្នូរជាងនៅក្នុងចិត្តដើម្បីទទួលរងនូវការវាយប្រហារដ៏សាហាវនៃសំណាងអាក្រក់ ឬដើម្បីចាប់អាវុធប្រឆាំងនឹងសមុទ្រនៃបញ្ហា។"
             ],
-            food_recipes: [
+            Lesson_8: [
                 "ដើម្បីធ្វើពងទាប្រឡាក់ដ៏ល្អឥតខ្ចោះ សូមវាយស៊ុតបីជាមួយទឹកដោះគោបន្តិច រួចចាក់ចូលទៅក្នុងខ្ទះក្ដៅដែលមានប៊ឺ។ ចំអិនរហូតដល់ឆ្អិន។",
                 "សម្រាប់ទឹកជ្រលក់ប៉ាស្តាសាមញ្ញ សូមចៀនខ្ទឹមស និងខ្ទឹមបារាំង រួចបន្ថែមប៉េងប៉ោះកិន រួចដាំរហូតដល់ខាប់។",
                 "ការដុតនំប៉័ងទាមទារការអត់ធ្មត់ ការលាយ ការច្របាច់ និងការបញ្ជាក់គឺជាជំហានសំខាន់សម្រាប់នំប៉័ងឡើងល្អ និងមានជាតិ។",
                 "សាឡាត់ស្រស់ត្រូវការបន្លែបៃតងស្រស់ បន្លែចម្រុះពណ៌ និងទឹកជ្រលក់វីនីហ្គេតស្រាល។",
                 "Smoothies គឺលឿន និងល្អសម្រាប់សុខភាព។ លាយផ្លែឈើដែលអ្នកចូលចិត្ត បន្លែបៃតងមួយចំនួន និងវត្ថុរាវដូចជាទឹក ឬទឹកដោះគោអាល់ម៉ុន។"
             ],
-            travel_descriptions: [
+            Lesson_9: [
                 "ទីក្រុងប៉ារីស ដែលជាទីក្រុងពន្លឺ ត្រូវបានគេស្គាល់ដោយសារប៉ម Eiffel ដ៏ល្បីល្បាញ សារមន្ទីរ Louvre និងហាងកាហ្វេតាមចិញ្ចើមផ្លូវដ៏ស្រស់ស្អាត។",
                 "Grand Canyon ផ្ដល់នូវទិដ្ឋភាពដ៏អស្ចារ្យនៃស្រទាប់ថ្មក្រហមដែលឆ្លាក់ដោយទន្លេ Colorado ។",
                 "ទីក្រុងតូក្យូគឺជាទីក្រុងធំមួយដែលរស់រវើក ដោយរួមបញ្ចូលគ្នានូវប្រពៃណីបុរាណជាមួយនឹងបច្ចេកវិទ្យាទំនើប និងតំបន់ដែលមមាញឹក។",
                 "ព្រៃអាម៉ាហ្សូនគឺជាព្រៃទឹកភ្លៀងដ៏ធំបំផុតនៅលើពិភពលោក ដែលជាជម្រកនៃភាពចម្រុះជីវៈដ៏អស្ចារ្យ និងប្រព័ន្ធអេកូឡូស៊ីប្លែកៗ។",
                 "ទីក្រុងរ៉ូម ដែលជាទីក្រុងអមតៈ មានប្រាសាទបុរាណដូចជា Colosseum និង Roman Forum រួមជាមួយនឹងសិល្បៈ Renaissance ដ៏អស្ចារ្យ។"
             ],
-            daily_life: [
+            Lesson_10: [
                 "ការភ្ញាក់ពីព្រលឹមអាចជួយអ្នកចាប់ផ្តើមថ្ងៃរបស់អ្នកជាមួយនឹងចិត្តស្ងប់ និងពេលវេលាកាន់តែច្រើនសម្រាប់កិច្ចការផ្ទាល់ខ្លួន ឬការហាត់ប្រាណ។",
                 "ការធ្វើម្ហូបនៅផ្ទះគឺជាមធ្យោបាយដ៏ល្អដើម្បីសន្សំប្រាក់ និងគ្រប់គ្រងគ្រឿងផ្សំនៅក្នុងអាហាររបស់អ្នក ដែលជំរុញទម្លាប់ញ៉ាំអាហារដែលមានសុខភាពល្អ។",
                 "ការសម្រាកខ្លីៗពេញមួយថ្ងៃធ្វើការរបស់អ្នកអាចបង្កើនការផ្ដោតអារម្មណ៍ និងផលិតភាព ការពារការអស់កម្លាំង។",
@@ -319,8 +353,6 @@
         // Get references to DOM elements
         const textDisplay = document.getElementById('text-display');
         const typedTextSpan = document.getElementById('typed-text');
-        const currentCharSpan = document.getElementById('current-char');
-        const remainingTextSpan = document.getElementById('remaining-text');
         const textInput = document.getElementById('text-input');
         const startButton = document.getElementById('start-button');
         const resetButton = document.getElementById('reset-button');
@@ -329,16 +361,16 @@
         const accuracyDisplay = document.getElementById('accuracy-display');
         const errorsDisplay = document.getElementById('errors-display');
         const timerDisplay = document.getElementById('timer-display');
-        const wordsAttemptedDisplay = document.getElementById('words-attempted-display'); 
-        const correctWordsDisplay = document.getElementById('correct-words-display'); 
-        const remainingWordsDisplay = document.getElementById('remaining-words-display'); 
+        const wordsAttemptedDisplay = document.getElementById('words-attempted-display');
+        const correctWordsDisplay = document.getElementById('correct-words-display');
+        const remainingWordsDisplay = document.getElementById('remaining-words-display');
         const scoreDisplay = document.getElementById('score-display');
         const testDurationSelect = document.getElementById('test-duration');
         const textCategorySelect = document.getElementById('text-category');
         const caseSensitiveCheckbox = document.getElementById('case-sensitive');
-        const userNameSelect = document.getElementById('user-name'); 
+        const userNameSelect = document.getElementById('user-name');
 
-        // Modal elements (existing message modal)
+        // Modal elements
         const messageModal = document.getElementById('message-modal');
         const modalMessage = document.getElementById('modal-message');
         const modalCloseButton = document.getElementById('modal-close-button');
@@ -347,26 +379,22 @@
         let currentText = '';
         let charIndex = 0;
         let startTime = 0;
-        let endTime = 0;
         let timerInterval;
         let isTestRunning = false;
         let selectedDuration = 0;
-        let wordsAttemptedCount = 0; 
-        let typedCharsCorrectness = []; 
-        let isCaseSensitive = false;
-        let remainingWordsCount = 0; 
-        let userName = ''; // Variable to store selected user name
+        let userName = '';
+        let isCaseSensitive = true;
 
-        // Variables to store final results for printing
-        let finalWPM = 0;
-        let finalAccuracy = 0;
-        let finalErrors = 0;
-        let finalTime = 0;
-        let finalScore = 0;
-        let finalWordsAttempted = 0; 
-        let finalCorrectWords = 0; 
-        let finalRemainingWords = 0; 
-        let testEndedByTime = false; 
+        // Variables to store final results for printing (declared globally, values set in endTest/initializeTest)
+        let finalWPM;
+        let finalAccuracy;
+        let finalErrors;
+        let finalTime;
+        let finalScore;
+        let finalWordsAttempted;
+        let finalCorrectWords;
+        let finalRemainingWords;
+        let testEndedByTime = false;
 
         /**
          * Displays a custom message box (modal).
@@ -374,7 +402,6 @@
          */
         function showMessage(message) {
             modalMessage.textContent = message;
-            modalMessage.classList.remove('hidden'); 
             messageModal.classList.remove('hidden');
         }
 
@@ -396,38 +423,102 @@
         }
 
         /**
+         * Updates the visual display of the text, showing typed, current, and remaining parts.
+         * Also handles highlighting and scrolling.
+         */
+        function updateTextDisplay() {
+            const typed = currentText.substring(0, charIndex);
+            const current = currentText[charIndex] || '';
+            const remaining = currentText.substring(charIndex + 1);
+
+            let fullTextHtml = '';
+            for (let i = 0; i < currentText.length; i++) {
+                const expectedChar = currentText[i];
+                let className = '';
+
+                if (i < typed.length) { // Characters that have been typed
+                    const typedChar = textInput.value[i]; // Get char from actual input
+                    let isCharCorrect;
+                    if (isCaseSensitive) {
+                        isCharCorrect = (typedChar === expectedChar);
+                    } else {
+                        isCharCorrect = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
+                    }
+
+                    if (isCharCorrect) {
+                        className = 'correct';
+                    } else {
+                        className = 'incorrect';
+                    }
+                }
+
+                // Highlight current character if test is running and it's the next char to type
+                if (i === charIndex && isTestRunning) {
+                    className += ' highlight-current';
+                }
+
+                fullTextHtml += `<span class="${className}">${expectedChar}</span>`;
+            }
+            typedTextSpan.innerHTML = fullTextHtml;
+
+            // Adjust scroll to keep current character in view
+            const highlightedChar = textDisplay.querySelector('.highlight-current');
+            if (highlightedChar) {
+                const container = textDisplay;
+                const containerRect = container.getBoundingClientRect();
+                const charRect = highlightedChar.getBoundingClientRect();
+
+                // Scroll only if the char is out of view vertically
+                if (charRect.bottom > containerRect.bottom) {
+                    container.scrollTop += (charRect.bottom - containerRect.bottom) + 20; // +20 for some padding
+                } else if (charRect.top < containerRect.top) {
+                    container.scrollTop -= (containerRect.top - charRect.top) + 20; // +20 for some padding
+                }
+            }
+        }
+
+        /**
          * Initializes the typing test by setting up the text and resetting game state.
          */
         function initializeTest() {
             const selectedCategory = textCategorySelect.value;
-            isCaseSensitive = caseSensitiveCheckbox.checked; 
+            isCaseSensitive = caseSensitiveCheckbox.checked;
+            userName = userNameSelect.value;
 
-            testDurationSelect.disabled = false;
-
-            // Determine which text to use based on the selected category
-            const categoryTexts = texts[selectedCategory] || texts.general; 
+            // Get a random text for the selected category
+            const categoryTexts = texts[selectedCategory] || texts.Lesson_1;
             currentText = categoryTexts[Math.floor(Math.random() * categoryTexts.length)];
-            
+
             charIndex = 0;
             startTime = 0;
-            endTime = 0;
             isTestRunning = false;
-            selectedDuration = parseInt(testDurationSelect.value); 
-            wordsAttemptedCount = 0; 
-            typedCharsCorrectness = new Array(currentText.length).fill(null); 
-            testEndedByTime = false; 
-
-            remainingWordsCount = countWords(currentText);
+            selectedDuration = parseInt(testDurationSelect.value);
 
             clearInterval(timerInterval);
+
+            // Reset all displays to zero/initial state
             wpmDisplay.textContent = '0';
             accuracyDisplay.textContent = '0%';
-            errorsDisplay.textContent = '0'; 
+            errorsDisplay.textContent = '0';
             timerDisplay.textContent = '0';
-            wordsAttemptedDisplay.textContent = '0'; 
-            correctWordsDisplay.textContent = '0'; 
-            remainingWordsDisplay.textContent = remainingWordsCount; 
+            wordsAttemptedDisplay.textContent = '0';
+            correctWordsDisplay.textContent = '0';
+            remainingWordsDisplay.textContent = countWords(currentText); // Display total words initially
             scoreDisplay.textContent = '0';
+
+            // Reset final results variables for a new test
+            finalWPM = 0;
+            finalAccuracy = 0;
+            finalErrors = 0;
+            finalTime = 0;
+            finalScore = 0;
+            finalWordsAttempted = 0;
+            finalCorrectWords = 0;
+            finalRemainingWords = 0;
+            testEndedByTime = false;
+
+            textInput.value = '';
+            textInput.disabled = true;
             startButton.textContent = 'ចាប់ផ្ដើមសាកល្បង';
             startButton.disabled = false;
             printButton.disabled = true;
@@ -435,51 +526,11 @@
             // Enable options
             testDurationSelect.disabled = false;
             textCategorySelect.disabled = false;
-            caseSensitiveCheckbox.disabled = false; 
-            userNameSelect.disabled = false; // Enable name select
+            caseSensitiveCheckbox.disabled = false;
+            userNameSelect.disabled = false;
 
             updateTextDisplay();
-            hideMessage(); 
-        }
-
-        /**
-         * Updates the visual display of the text, showing typed, current, and remaining parts.
-         */
-        function updateTextDisplay() {
-            const typed = currentText.substring(0, charIndex);
-            const current = currentText[charIndex] || ''; 
-            const remaining = currentText.substring(charIndex + 1);
-
-            typedTextSpan.innerHTML = typed.split('').map((expectedChar, i) => {
-                let className = '';
-                if (typedCharsCorrectness[i] === true) {
-                    className = 'correct';
-                }
-                return `<span class="${className}">${expectedChar}</span>`;
-            }).join('');
-
-            currentCharSpan.textContent = current;
-            if (isTestRunning && current) {
-                currentCharSpan.classList.add('highlight-current');
-            } else {
-                currentCharSpan.classList.remove('highlight-current');
-            }
-
-            remainingTextSpan.textContent = remaining;
-
-            const currentCharElement = currentCharSpan;
-            if (currentCharElement) {
-                const container = textDisplay;
-                const containerRect = container.getBoundingClientRect();
-                const charRect = currentCharElement.getBoundingClientRect();
-
-                if (charRect.bottom > containerRect.bottom) {
-                    container.scrollTop += (charRect.bottom - containerRect.bottom) + 20;
-                }
-                if (charRect.top < containerRect.top) {
-                    container.scrollTop -= (containerRect.top - charRect.top) + 20;
-                }
-            }
+            hideMessage();
         }
 
         /**
@@ -488,33 +539,36 @@
         function startTest() {
             if (!currentText || isTestRunning) return;
 
-            userName = userNameSelect.value; 
-            if (userName === '') { 
+            if (userNameSelect.value === '') {
                 showMessage("សូមជ្រើសរើសឈ្មោះរបស់អ្នកដើម្បីចាប់ផ្ដើមការសាកល្បង!");
-                return; 
+                return;
             }
-            
+            userName = userNameSelect.value;
+            isCaseSensitive = caseSensitiveCheckbox.checked;
+
             isTestRunning = true;
             textInput.disabled = false;
             textInput.focus();
             startTime = new Date().getTime();
-            startButton.textContent = 'កំពុងវាយ...'; // Changed button text while typing
+
+            startButton.textContent = 'កំពុងវាយ...';
             startButton.disabled = true;
             printButton.disabled = true;
 
+            // Disable options during test
             testDurationSelect.disabled = true;
             textCategorySelect.disabled = true;
             caseSensitiveCheckbox.disabled = true;
-            userNameSelect.disabled = true; 
+            userNameSelect.disabled = true;
 
-
+            // Start timer interval
             timerInterval = setInterval(() => {
                 const currentTime = new Date().getTime();
                 const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
                 timerDisplay.textContent = elapsedSeconds;
 
                 if (selectedDuration > 0 && elapsedSeconds >= selectedDuration) {
-                    testEndedByTime = true; 
+                    testEndedByTime = true;
                     endTest();
                 }
             }, 1000);
@@ -529,41 +583,19 @@
         function handleInput(event) {
             if (!isTestRunning) return;
 
-            if (event.inputType === 'deleteContentBackward') {
-                if (charIndex > 0) {
-                    charIndex--;
-                    typedCharsCorrectness[charIndex] = null; 
-                }
-            } else {
-                const typedChar = event.data;
-                const expectedChar = currentText[charIndex];
+            const typedValue = textInput.value;
+            charIndex = typedValue.length; // Update charIndex for regular typing
 
-                let isCorrect;
-                if (isCaseSensitive) {
-                    isCorrect = (typedChar === expectedChar);
-                } else {
-                    isCorrect = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
-                }
-                typedCharsCorrectness[charIndex] = isCorrect; 
-                
-                charIndex++; 
+            // Prevent typing beyond the length of the currentText
+            if (charIndex > currentText.length) {
+                textInput.value = currentText.substring(0, currentText.length);
+                charIndex = currentText.length;
             }
 
-            const currentInputValue = textInput.value.trim();
-            if (currentInputValue) {
-                wordsAttemptedCount = countWords(currentInputValue);
-            } else {
-                wordsAttemptedCount = 0;
-            }
-            wordsAttemptedDisplay.textContent = wordsAttemptedCount;
+            updateTextDisplay(); // Update display to show current typing progress
 
-            const remainingTextSlice = currentText.substring(charIndex);
-            remainingWordsCount = countWords(remainingTextSlice);
-            remainingWordsDisplay.textContent = remainingWordsCount;
-
-            updateTextDisplay();
-
-            if (charIndex === currentText.length) {
+            // End test if all characters of the original text have been typed
+            if (charIndex >= currentText.length) {
                 endTest();
             }
         }
@@ -572,32 +604,36 @@
          * Ends the typing test and calculates results.
          */
         function endTest() {
-            if (!isTestRunning) return;
+            if (!isTestRunning && !testEndedByTime) return;
 
             isTestRunning = false;
-            endTime = new Date().getTime();
+            const endTime = new Date().getTime();
             clearInterval(timerInterval);
+
             textInput.disabled = true;
-            startButton.textContent = 'ចាប់ផ្ដើមសាកល្បងឡើងវិញ'; // Changed button text after test
+            startButton.textContent = 'ចាប់ផ្ដើមសាកល្បងឡើងវិញ';
             startButton.disabled = false;
             printButton.disabled = false;
 
+            // Enable options
             testDurationSelect.disabled = false;
             textCategorySelect.disabled = false;
-            caseSensitiveCheckbox.disabled = false; 
-            userNameSelect.disabled = false; 
+            caseSensitiveCheckbox.disabled = false;
+            userNameSelect.disabled = false;
 
             const timeTakenSeconds = (endTime - startTime) / 1000;
             const timeTakenMinutes = timeTakenSeconds / 60;
 
             let actualCorrectChars = 0;
             let actualErrors = 0;
-            
-            for (let i = 0; i < charIndex; i++) {
-                const typedChar = textInput.value[i];
+            const typedContent = textInput.value; // The full typed content
+
+            // Calculate correct and incorrect characters
+            for (let i = 0; i < Math.max(typedContent.length, currentText.length); i++) {
+                const typedChar = typedContent[i];
                 const expectedChar = currentText[i];
 
-                if (typedChar !== undefined && expectedChar !== undefined) {
+                if (i < typedContent.length && i < currentText.length) { // Typed char exists and corresponds to expected char
                     if (isCaseSensitive) {
                         if (typedChar === expectedChar) {
                             actualCorrectChars++;
@@ -605,85 +641,67 @@
                             actualErrors++;
                         }
                     } else {
-                        if (typedChar.toLowerCase() === expectedChar.toLowerCase()) {
+                        if (typedChar?.toLowerCase() === expectedChar?.toLowerCase()) {
                             actualCorrectChars++;
                         } else {
                             actualErrors++;
                         }
                     }
-                } else if (expectedChar !== undefined) {
+                } else if (i < typedContent.length && i >= currentText.length) { // Extra typed characters
+                    actualErrors++;
+                } else if (i >= typedContent.length && i < currentText.length) { // Untyped characters
                     actualErrors++;
                 }
             }
 
+            // Calculate correct words
             let correctWordsCounter = 0;
-            const originalWordsAtCharIndex = currentText.substring(0, charIndex).split(/\s+/).filter(word => word.length > 0);
-            const typedWordsAtCharIndex = textInput.value.substring(0, charIndex).split(/\s+/).filter(word => word.length > 0);
+            const originalWords = currentText.split(/\s+/).filter(word => word.length > 0);
+            const typedWords = typedContent.split(/\s+/).filter(word => word.length > 0);
 
-            for (let i = 0; i < Math.min(originalWordsAtCharIndex.length, typedWordsAtCharIndex.length); i++) {
+            for (let i = 0; i < Math.min(originalWords.length, typedWords.length); i++) {
                 let match = false;
                 if (isCaseSensitive) {
-                    match = (typedWordsAtCharIndex[i] === originalWordsAtCharIndex[i]);
+                    match = (typedWords[i] === originalWords[i]);
                 } else {
-                    match = (typedWordsAtCharIndex[i].toLowerCase() === originalWordsAtCharIndex[i].toLowerCase());
+                    match = (typedWords[i].toLowerCase() === originalWords[i].toLowerCase());
                 }
                 if (match) {
                     correctWordsCounter++;
                 }
             }
-            finalCorrectWords = correctWordsCounter; 
+            finalCorrectWords = correctWordsCounter;
 
-            finalWPM = (actualCorrectChars / 5) / timeTakenMinutes;
-            finalWPM = timeTakenMinutes > 0 ? Math.max(0, Math.round(finalWPM)) : 0;
-
-            finalAccuracy = charIndex > 0 ? Math.max(0, Math.round((actualCorrectChars / charIndex) * 100)) : 0;
-
+            // Calculate WPM, Accuracy, Score
+            finalWPM = timeTakenMinutes > 0 ? Math.max(0, Math.round((actualCorrectChars / 5) / timeTakenMinutes)) : 0;
+            finalAccuracy = (actualCorrectChars + actualErrors) > 0 ? Math.max(0, Math.round((actualCorrectChars / (actualCorrectChars + actualErrors)) * 100)) : 0;
             finalErrors = actualErrors;
             finalTime = Math.round(timeTakenSeconds);
-            finalWordsAttempted = wordsAttemptedCount; 
-            finalRemainingWords = remainingWordsCount; 
+            finalWordsAttempted = countWords(typedContent);
+            finalRemainingWords = countWords(currentText.substring(charIndex));
+            if (finalRemainingWords < 0) {
+                finalRemainingWords = 0;
+            }
             finalScore = Math.round(finalWPM * (finalAccuracy / 100));
 
+            // Update result displays on the main interface
             wpmDisplay.textContent = finalWPM;
             accuracyDisplay.textContent = `${finalAccuracy}%`;
             errorsDisplay.textContent = finalErrors;
             timerDisplay.textContent = finalTime;
-            wordsAttemptedDisplay.textContent = finalWordsAttempted; 
-            correctWordsDisplay.textContent = finalCorrectWords; 
-            remainingWordsDisplay.textContent = finalRemainingWords; 
+            wordsAttemptedDisplay.textContent = finalWordsAttempted;
+            correctWordsDisplay.textContent = finalCorrectWords;
+            remainingWordsDisplay.textContent = finalRemainingWords; // Display remaining words
             scoreDisplay.textContent = finalScore;
 
-            currentCharSpan.classList.remove('highlight-current');
+            // Final update of text display to show all errors/corrections
+            charIndex = currentText.length; // Set charIndex to end for final rendering
+            updateTextDisplay();
 
-            let fullTextHtml = '';
-            for (let i = 0; i < currentText.length; i++) {
-                const expectedChar = currentText[i];
-                let className = '';
-
-                if (i < textInput.value.length) { 
-                    const typedChar = textInput.value[i];
-                    let isCharCorrect;
-                    if (isCaseSensitive) {
-                        isCharCorrect = (typedChar === expectedChar);
-                    } else {
-                        isCharCorrect = (typedChar?.toLowerCase() === expectedChar?.toLowerCase());
-                    }
-
-                    if (isCharCorrect) {
-                        className = 'correct';
-                    } else {
-                        className = 'incorrect';
-                    }
-                } 
-                fullTextHtml += `<span class="${className}">${expectedChar}</span>`;
-            }
-            typedTextSpan.innerHTML = fullTextHtml; 
-            
-            currentCharSpan.textContent = '';
-            remainingTextSpan.textContent = '';
-
+            // Display modal message if test ended by time
             if (testEndedByTime) {
-                showMessage("អស់​ពេល​ហើយ! ការ​សាក​ល្បង​របស់​អ្នក​បាន​បញ្ចប់។"); // Changed message
+                showMessage("អស់​ពេល​ហើយ! ការ​សាក​ល្បង​របស់​អ្នក​បាន​បញ្ចប់។");
+                testEndedByTime = false;
             }
         }
 
@@ -691,19 +709,27 @@
          * Generates and prints the test results.
          */
         function printResults() {
-            const printUserName = userName === '' ? 'មិនបានជ្រើសរើស' : userName; // Changed "Not Selected"
+            const printUserName = userName === '' ? 'មិនបានជ្រើសរើស' : userName;
+            const originalTextFull = currentText; // Full original text
+            const typedTextFull = textInput.value; // Full typed text
+
             const printContent = `
                 <div style="font-family: 'Kantumruy Pro', sans-serif; padding: 20px; text-align: center;">
-                    <h1 style="color: #2563eb;">លទ្ធផល​នៃ​ការ​សាកល្បង​វាយអក្សរ</h1>
+                    <header style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 20px;">
+                        <h1 style="color: #2563eb; font-size: 24px; margin: 0;">កម្មវិធីហាត់ម្រាមដៃ</h1>
+                        <p style="font-size: 14px; color: #666;">លទ្ធផល​នៃ​ការ​សាកល្បង​វាយអក្សរ</p>
+                    </header>
+
+                    <h2 style="color: #1d4ed8; margin-bottom: 10px;">ព័ត៌មាន​លម្អិត​នៃ​ការ​សាកល្បង:</h2>
                     <p style="font-size: 18px;">ឈ្មោះ: ${printUserName}</p>
                     <p style="font-size: 18px;">រយៈពេល​សាកល្បង: ${selectedDuration === 0 ? 'អត្ថបទពេញ' : selectedDuration + ' វិនាទី'}</p>
-                    <p style="font-size: 18px;">ប្រភេទ​អត្ថបទ: ${textCategorySelect.value.charAt(0).toUpperCase() + textCategorySelect.value.slice(1)}</p>
+                    <p style="font-size: 18px;">ប្រភេទ​អត្ថបទ: ${textCategorySelect.options[textCategorySelect.selectedIndex].text}</p>
                     <p style="font-size: 18px;">ប្រកាន់អក្សរធំ/តូច: ${isCaseSensitive ? 'បាទ/ចាស' : 'ទេ'}</p>
                     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
                     <h2 style="color: #1d4ed8; margin-bottom: 10px;">ដំណើរការ​របស់​អ្នក:</h2>
                     <table style="width: 80%; margin: 0 auto; border-collapse: collapse; margin-bottom: 20px;">
                         <tr>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">WPM (ពាក្យក្នុងមួយនាទី):</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; font-weight: bold;">ពាក្យក្នុងមួយនាទី:</td>
                             <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${finalWPM}</td>
                         </tr>
                         <tr>
@@ -737,14 +763,18 @@
                     </table>
                     
                     <h3 style="color: #1d4ed8; margin-bottom: 10px;">អត្ថបទ​ដើម:</h3>
-                    <div style="text-align: left; padding: 10px; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px; word-wrap: break-word;">
-                        ${currentText}
+                    <div style="text-align: left; padding: 10px; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px; word-wrap: break-word; font-size: 20px;">
+                        ${originalTextFull}
                     </div>
 
                     <h3 style="color: #1d4ed8; margin-bottom: 10px;">អត្ថបទ​ដែល​អ្នក​បាន​វាយ:</h3>
                     <div style="text-align: left; padding: 10px; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 8px; word-wrap: break-word;">
-                        ${textInput.value}
+                        ${typedTextFull}
                     </div>
+
+                    <footer style="border-top: 1px solid #ccc; padding-top: 10px; margin-top: 20px; font-size: 12px; color: #666;">
+                        <p>&copy; 2025 កម្មវិធីហាត់ម្រាមដៃ. រក្សាសិទ្ធិគ្រប់យ៉ាង។</p>
+                    </footer>
                 </div>
             `;
 
@@ -752,7 +782,7 @@
             printWindow.document.write(printContent);
             printWindow.document.close();
 
-            printWindow.onload = function() {
+            printWindow.onload = function () {
                 printWindow.print();
                 printWindow.close();
             };
@@ -762,17 +792,23 @@
         startButton.addEventListener('click', startTest);
         resetButton.addEventListener('click', initializeTest);
         printButton.addEventListener('click', printResults);
+
+        // Listen for 'input' for character updates
         textInput.addEventListener('input', handleInput);
+
+        // Re-initialize test when options change
         testDurationSelect.addEventListener('change', initializeTest);
-        textCategorySelect.addEventListener('change', initializeTest); 
+        textCategorySelect.addEventListener('change', initializeTest);
         caseSensitiveCheckbox.addEventListener('change', initializeTest);
         userNameSelect.addEventListener('change', initializeTest);
+
         modalCloseButton.addEventListener('click', hideMessage);
 
         // Initial setup on page load
         document.addEventListener('DOMContentLoaded', () => {
-            initializeTest(); 
+            initializeTest();
         });
     </script>
 </body>
+
 </html>
